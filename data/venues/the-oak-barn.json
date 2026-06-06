@@ -1,0 +1,23 @@
+{
+  "id": "the-oak-barn",
+  "type": "venue",
+  "name": "The Oak Barn",
+  "url": "https://example.com/the-oak-barn",
+  "description": "A restored 18th-century timber barn set in 40 acres of Cotswold countryside. Exposed oak beams, a flagstone ceremony hall, and a walled garden for drinks receptions. Exclusive use for the full weekend.",
+  "photos": [
+    "https://images.unsplash.com/photo-1519167758481-83f550bb49b3?w=1200&q=80",
+    "https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?w=1200&q=80",
+    "https://images.unsplash.com/photo-1525258946800-98cfd641d0de?w=1200&q=80"
+  ],
+  "price": { "amount": 8500, "currency": "GBP", "unit": "total", "note": "Saturday, peak season, exclusive weekend hire" },
+  "capacity": { "min": 50, "max": 150, "seated": 120 },
+  "location": { "address": "Burford, Oxfordshire", "city": "Burford", "region": "Oxfordshire", "setting": "both" },
+  "availability": { "openDates": ["2026-09-12", "2026-09-26", "2026-10-10"], "leadTimeWeeks": 52, "notes": "2026 Saturdays filling fast; midweek widely available." },
+  "rating": { "score": 4.8, "count": 213, "source": "Hitched", "awards": ["Hitched Wedding Awards 2025"] },
+  "contact": { "name": "Emma Fielding", "email": "events@example.com", "phone": "+44 1993 000000", "website": "https://example.com/the-oak-barn/enquire" },
+  "status": "shortlisted",
+  "notes": "Loved the walled garden. Need to confirm wet-weather backup for the ceremony.",
+  "tags": ["barn", "rustic", "exclusive-use"],
+  "attributes": { "accommodation": "Sleeps 16 on-site", "corkage": "£15/bottle", "inHouseCatering": "no" },
+  "addedAt": "2026-06-06"
+}

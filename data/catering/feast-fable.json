@@ -1,0 +1,21 @@
+{
+  "id": "feast-fable",
+  "type": "catering",
+  "name": "Feast & Fable",
+  "url": "https://example.com/feast-fable",
+  "venueId": "the-oak-barn",
+  "description": "Seasonal, locally-sourced sharing feasts served family-style. Three-course menu with canapés, plus evening grazing table. Fully staffed, brings own bar.",
+  "photos": [
+    "https://images.unsplash.com/photo-1555244162-803834f70033?w=1200&q=80",
+    "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=1200&q=80"
+  ],
+  "price": { "amount": 95, "currency": "GBP", "unit": "per_person", "note": "3 courses + canapés, min 80 guests" },
+  "location": { "city": "Cheltenham", "region": "Gloucestershire" },
+  "rating": { "score": 4.9, "count": 84, "source": "Google" },
+  "contact": { "name": "Sofia Marchetti", "email": "events@example.com" },
+  "status": "quoted",
+  "notes": "Tasting booked for July. Approved by The Oak Barn's supplier list.",
+  "tags": ["sharing-feast", "seasonal", "local"],
+  "attributes": { "menuStyle": "family-style", "dietary": "vegan & GF options", "staffing": "included", "bar": "own bar" },
+  "addedAt": "2026-06-06"
+}

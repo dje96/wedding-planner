@@ -1,0 +1,21 @@
+{
+  "id": "luminous-co",
+  "type": "photographer",
+  "name": "Luminous & Co.",
+  "url": "https://example.com/luminous-co",
+  "venueId": "the-oak-barn",
+  "description": "Documentary-style wedding photography with a warm, film-inspired finish. Two shooters as standard, full-day coverage, online gallery within three weeks.",
+  "photos": [
+    "https://images.unsplash.com/photo-1606216794074-735e91aa2c92?w=1200&q=80",
+    "https://images.unsplash.com/photo-1537633552985-df8429e8048b?w=1200&q=80"
+  ],
+  "price": { "amount": 2400, "currency": "GBP", "unit": "total", "note": "10-hour package, two photographers" },
+  "location": { "city": "Oxford", "region": "Oxfordshire" },
+  "rating": { "score": 4.9, "count": 156, "source": "Google", "awards": ["Fearless Photographers member"] },
+  "contact": { "name": "Priya Anand", "email": "studio@example.com" },
+  "status": "shortlisted",
+  "notes": "Portfolio is gorgeous and they've shot at The Oak Barn before.",
+  "tags": ["documentary", "two-shooters"],
+  "attributes": { "hours": "10", "secondShooter": "included", "albumIncluded": "no", "galleryTurnaround": "3 weeks" },
+  "addedAt": "2026-06-06"
+}
