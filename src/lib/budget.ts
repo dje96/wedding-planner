@@ -1,26 +1,91 @@
-import { linkedItems } from "../data";
-import type { Item, Price } from "../types";
+import { linkedItems, VENUES } from "../data";
+import type { Item, Price, Status } from "../types";
+import { ASSUMED_STAY_NIGHTS, BUDGET, CURRENCY, GUEST_ESTIMATE } from "../config";
 
-// A rough guest count used to roll per-person prices up into a scenario total.
-// Adjust to your real headcount — it only affects the estimate, not stored data.
-export const GUEST_ESTIMATE = 120;
+export { GUEST_ESTIMATE };
 
-/** Best-effort single number for an item, normalised to a scenario contribution. */
-export function estimatedCost(price?: Price, guests = GUEST_ESTIMATE): number {
+/** Nights to assume for a venue: explicit `stayNights`, else the beachfront
+ *  default for a family stay, else 1 (a day-of event has no multi-night cost). */
+export function stayNights(item: Item): number {
+  if (item.stayNights != null) return item.stayNights;
+  return item.eventType === "family_stay" ? ASSUMED_STAY_NIGHTS : 1;
+}
+
+/**
+ * Best-effort single cost for an item, normalised to a scenario contribution.
+ * - per_person → amount × guests
+ * - per_night  → amount × nights (family-stay duration)
+ * - per_week   → amount × ceil(nights / 7)
+ * - per_day    → amount × nights
+ * - everything else (total / from / per_hour) → amount as-is
+ */
+export function estimatedCost(item: Item, guests = GUEST_ESTIMATE): number {
+  const price: Price | undefined = item.price;
   if (!price || price.amount == null) return 0;
-  return price.unit === "per_person" ? price.amount * guests : price.amount;
+  const nights = stayNights(item);
+  switch (price.unit) {
+    case "per_person":
+      return price.amount * guests;
+    case "per_night":
+    case "per_day":
+      return price.amount * nights;
+    case "per_week":
+      return price.amount * Math.max(1, Math.ceil(nights / 7));
+    default:
+      return price.amount;
+  }
 }
 
 /** Total estimated spend for a venue plus everything linked to it. */
 export function scenarioTotal(venue: Item, guests = GUEST_ESTIMATE): number {
   const linked = linkedItems(venue.id);
-  return [venue, ...linked].reduce((sum, i) => sum + estimatedCost(i.price, guests), 0);
+  return [venue, ...linked].reduce((sum, i) => sum + estimatedCost(i, guests), 0);
 }
 
-export function formatTotal(amount: number, currency = "GBP"): string {
-  return new Intl.NumberFormat("en-GB", {
+export function formatTotal(amount: number, currency = CURRENCY): string {
+  return new Intl.NumberFormat("en-US", {
     style: "currency",
     currency,
     maximumFractionDigits: 0,
   }).format(amount);
+}
+
+export interface BudgetStatus {
+  budget: number;
+  spent: number;
+  remaining: number;
+  pct: number; // 0–100+, capped only for the bar width by the caller
+  over: boolean;
+}
+
+/** Budget status for a given scenario total (e.g. the leading venue). */
+export function budgetStatus(spent: number): BudgetStatus {
+  const remaining = BUDGET - spent;
+  const pct = BUDGET > 0 ? (spent / BUDGET) * 100 : 0;
+  return { budget: BUDGET, spent, remaining, pct, over: spent > BUDGET };
+}
+
+const STATUS_RANK: Status[] = [
+  "booked",
+  "shortlisted",
+  "quoted",
+  "contacted",
+  "considering",
+  "passed",
+];
+
+/** The venue you're furthest along with (booked > shortlisted > …), if any. */
+export function leadingVenue(): Item | undefined {
+  if (VENUES.length === 0) return undefined;
+  return [...VENUES].sort(
+    (a, b) =>
+      STATUS_RANK.indexOf(a.status ?? "considering") -
+      STATUS_RANK.indexOf(b.status ?? "considering")
+  )[0];
+}
+
+/** Scenario total for the leading venue (0 if none). */
+export function leadingScenarioTotal(): number {
+  const lead = leadingVenue();
+  return lead ? scenarioTotal(lead) : 0;
 }

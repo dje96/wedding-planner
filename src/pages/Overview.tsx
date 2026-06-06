@@ -1,13 +1,29 @@
 import { Link } from "react-router-dom";
 import { ALL_ITEMS, VENUES, linkedItems, unassignedItems } from "../data";
-import { CATEGORY_LABELS, type Item } from "../types";
+import { CATEGORY_LABELS, EVENT_TYPE_LABELS, type Item } from "../types";
 import { formatPrice, formatCapacity, formatLocation, formatRating } from "../lib/format";
-import { scenarioTotal, formatTotal } from "../lib/budget";
+import {
+  scenarioTotal,
+  formatTotal,
+  budgetStatus,
+  leadingScenarioTotal,
+  leadingVenue,
+  stayNights,
+} from "../lib/budget";
+import { targetDateMatch } from "../lib/dates";
+import { TARGET_DATE_LABEL } from "../config";
 import { StatusPill } from "../components/StatusPill";
+
+const DATE_MATCH: Record<ReturnType<typeof targetDateMatch>, { label: string; color: string }> = {
+  available: { label: "✓ dates open", color: "var(--sage)" },
+  conflict: { label: "⚠ dates clash", color: "var(--st-passed)" },
+  unknown: { label: "check 2026", color: "var(--ink-faint)" },
+};
 
 function VenueDossier({ venue, index }: { venue: Item; index: number }) {
   const linked = linkedItems(venue.id);
   const total = scenarioTotal(venue);
+  const match = DATE_MATCH[targetDateMatch(venue)];
   return (
     <article className="dossier reveal" style={{ animationDelay: `${index * 90}ms` }}>
       <div className="dossier-top">
@@ -23,7 +39,15 @@ function VenueDossier({ venue, index }: { venue: Item; index: number }) {
               </Link>
               <div className="loc">{formatLocation(venue)}</div>
             </div>
-            <StatusPill status={venue.status} />
+            <div style={{ display: "flex", gap: "0.5rem", alignItems: "center", flexWrap: "wrap", justifyContent: "flex-end" }}>
+              {venue.eventType && (
+                <span className="chip">
+                  {EVENT_TYPE_LABELS[venue.eventType]}
+                  {venue.eventType === "family_stay" ? ` · ${stayNights(venue)}n` : ""}
+                </span>
+              )}
+              <StatusPill status={venue.status} />
+            </div>
           </div>
           {venue.description && <p className="desc">{venue.description}</p>}
           <div className="spec-row">
@@ -36,9 +60,9 @@ function VenueDossier({ venue, index }: { venue: Item; index: number }) {
               <span className="spec-v">{formatRating(venue)}</span>
             </div>
             <div className="spec">
-              <span className="spec-k">Setting</span>
-              <span className="spec-v" style={{ textTransform: "capitalize" }}>
-                {venue.location?.setting ?? "—"}
+              <span className="spec-k">Your dates</span>
+              <span className="spec-v" style={{ color: match.color }}>
+                {match.label}
               </span>
             </div>
             <div className="spec">
@@ -92,6 +116,9 @@ export function Overview() {
     ? Math.min(...VENUES.map((v) => scenarioTotal(v)).filter((n) => n > 0))
     : 0;
   const supplierCount = ALL_ITEMS.length - VENUES.length;
+  const leadTotal = leadingScenarioTotal();
+  const budget = budgetStatus(leadTotal);
+  const lead = leadingVenue();
 
   if (ALL_ITEMS.length === 0) {
     return (
@@ -141,6 +168,48 @@ export function Overview() {
           <div className="stat-label">Options tracked</div>
           <div className="stat-value tnum">{ALL_ITEMS.length}</div>
           <div className="stat-sub">across 4 categories</div>
+        </div>
+      </div>
+
+      <div className="planner-band reveal" style={{ animationDelay: "120ms" }}>
+        <div className="budget-panel">
+          <div className="bp-head">
+            <span className="bp-label">Budget</span>
+            <span className="bp-figures tnum">
+              {formatTotal(budget.spent)} <span className="muted">/ {formatTotal(budget.budget)}</span>
+            </span>
+          </div>
+          <div className="budget-bar">
+            <span
+              className={budget.over ? "over" : ""}
+              style={{ width: `${Math.min(100, budget.pct)}%` }}
+            />
+          </div>
+          <div className="bp-foot">
+            {leadTotal > 0 ? (
+              <>
+                {budget.over ? (
+                  <span style={{ color: "var(--st-passed)", fontWeight: 600 }}>
+                    {formatTotal(-budget.remaining)} over budget
+                  </span>
+                ) : (
+                  <span style={{ color: "var(--sage)", fontWeight: 600 }}>
+                    {formatTotal(budget.remaining)} remaining
+                  </span>
+                )}
+                {lead && <span className="muted"> · based on {lead.name}</span>}
+              </>
+            ) : (
+              <span className="muted">Add prices to track spend against budget</span>
+            )}
+          </div>
+        </div>
+        <div className="date-panel">
+          <span className="bp-label">Target dates</span>
+          <div className="dp-value">{TARGET_DATE_LABEL}</div>
+          <div className="muted" style={{ fontSize: "0.82rem" }}>
+            Venues flag whether they're open on your dates.
+          </div>
         </div>
       </div>
 

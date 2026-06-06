@@ -1,27 +1,58 @@
-import { CATEGORIES, type Category, type Item } from "./types";
+import { CATEGORIES, type Category, type DismissedEntry, type Item } from "./types";
 
-// Eagerly load every option file under /data. Vite inlines these at build time
-// and re-runs on hot reload, so dropping a new JSON file into data/<category>/
-// makes it appear in the dashboard with no code change.
-const modules = import.meta.glob<{ default: Item }>("/data/**/*.json", {
+// Eagerly load every file under /data. Vite inlines these at build time and
+// re-runs on hot reload, so dropping a new JSON file in makes it appear with no
+// code change. Three kinds of file live here, told apart by path:
+//   data/<category>/*.json  → tracked options (the dashboard's subject)
+//   data/review/*.json      → Scout candidates awaiting triage (Review tab)
+//   data/dismissed.json     → the ledger of candidates Scout should skip
+const modules = import.meta.glob<{ default: unknown }>("/data/**/*.json", {
   eager: true,
 });
 
-function loadItems(): Item[] {
-  const items: Item[] = [];
+const REVIEW_PREFIX = "/data/review/";
+const DISMISSED_PATH = "/data/dismissed.json";
+
+interface Loaded {
+  options: Item[];
+  review: Item[];
+  dismissed: DismissedEntry[];
+}
+
+function loadAll(): Loaded {
+  const options: Item[] = [];
+  const review: Item[] = [];
+  let dismissed: DismissedEntry[] = [];
+
   for (const [path, mod] of Object.entries(modules)) {
-    const item = mod.default;
+    if (path === DISMISSED_PATH) {
+      const ledger = mod.default as { dismissed?: DismissedEntry[] } | undefined;
+      dismissed = ledger?.dismissed ?? [];
+      continue;
+    }
+    const item = mod.default as Item | undefined;
     if (!item || !item.id || !item.type) {
       console.warn(`Skipping malformed data file: ${path}`);
       continue;
     }
-    items.push(item);
+    if (path.startsWith(REVIEW_PREFIX)) review.push(item);
+    else options.push(item);
   }
+
   // Stable, friendly ordering: by name within each load.
-  return items.sort((a, b) => a.name.localeCompare(b.name));
+  const byName = (a: Item, b: Item) => a.name.localeCompare(b.name);
+  return { options: options.sort(byName), review: review.sort(byName), dismissed };
 }
 
-export const ALL_ITEMS: Item[] = loadItems();
+const loaded = loadAll();
+
+export const ALL_ITEMS: Item[] = loaded.options;
+
+/** Scout candidates awaiting triage in the Review tab (not tracked options). */
+export const REVIEW_ITEMS: Item[] = loaded.review;
+
+/** Candidates Scout has dismissed — kept so future runs skip them. */
+export const DISMISSED: DismissedEntry[] = loaded.dismissed;
 
 export function itemsByCategory(category: Category): Item[] {
   return ALL_ITEMS.filter((i) => i.type === category);

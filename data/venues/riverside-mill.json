@@ -6,8 +6,12 @@
   "description": "A converted Victorian watermill on the River Test with floor-to-ceiling windows, an industrial-chic main hall, and a riverside terrace. Modern, light-filled, and a short drive from the station.",
   "photos": [
     "https://images.unsplash.com/photo-1507504031003-b417219a0fde?w=1200&q=80",
-    "https://images.unsplash.com/photo-1470217957101-da7150b9b681?w=1200&q=80"
+    "https://images.unsplash.com/photo-1470217957101-da7150b9b681?w=1200&q=80",
+    "https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?w=1200&q=80",
+    "https://images.unsplash.com/photo-1505236858219-8359eb29e329?w=1200&q=80",
+    "https://images.unsplash.com/photo-1519225421980-715cb0215aed?w=1200&q=80"
   ],
+  "eventType": "day_of",
   "price": { "amount": 11200, "currency": "GBP", "unit": "total", "note": "Saturday, includes ceremony + reception spaces" },
   "capacity": { "min": 80, "max": 200, "seated": 180 },
   "location": { "address": "Stockbridge, Hampshire", "city": "Stockbridge", "region": "Hampshire", "setting": "indoor" },

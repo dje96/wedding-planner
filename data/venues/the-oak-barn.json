@@ -7,8 +7,12 @@
   "photos": [
     "https://images.unsplash.com/photo-1519167758481-83f550bb49b3?w=1200&q=80",
     "https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?w=1200&q=80",
-    "https://images.unsplash.com/photo-1525258946800-98cfd641d0de?w=1200&q=80"
+    "https://images.unsplash.com/photo-1525258946800-98cfd641d0de?w=1200&q=80",
+    "https://images.unsplash.com/photo-1478146896981-b80fe463b330?w=1200&q=80",
+    "https://images.unsplash.com/photo-1469371670807-013ccf25f16a?w=1200&q=80",
+    "https://images.unsplash.com/photo-1444201983204-c43cbd584d93?w=1200&q=80"
   ],
+  "eventType": "day_of",
   "price": { "amount": 8500, "currency": "GBP", "unit": "total", "note": "Saturday, peak season, exclusive weekend hire" },
   "capacity": { "min": 50, "max": 150, "seated": 120 },
   "location": { "address": "Burford, Oxfordshire", "city": "Burford", "region": "Oxfordshire", "setting": "both" },

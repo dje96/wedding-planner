@@ -1,12 +1,20 @@
 import { useMemo, useState, type ReactNode } from "react";
 import { Link, useSearchParams } from "react-router-dom";
-import { CATEGORIES, CATEGORY_LABELS, STATUS_LABELS, type Category, type Item } from "../types";
+import {
+  CATEGORIES,
+  CATEGORY_LABELS,
+  EVENT_TYPE_LABELS,
+  STATUS_LABELS,
+  type Category,
+  type Item,
+} from "../types";
 import { itemsByCategory, getItem } from "../data";
 import {
   formatPrice,
   formatRating,
   formatCapacity,
   formatLocation,
+  formatSetting,
   formatDate,
 } from "../lib/format";
 import { estimatedCost } from "../lib/budget";
@@ -24,15 +32,15 @@ interface Row {
 function buildRows(cat: Category, maxPrice: number): Row[] {
   const rows: Row[] = [
     {
-      label: "Price",
+      label: cat === "venue" ? "Est. cost" : "Price",
       best: "min",
-      value: (i) => (i.price?.amount != null ? estimatedCost(i.price) : null),
+      value: (i) => (i.price?.amount != null ? estimatedCost(i) : null),
       render: (i) => (
         <div>
           <span className="cell-num">{formatPrice(i.price)}</span>
           {i.price?.amount != null && maxPrice > 0 && (
             <div className="pbar">
-              <span style={{ width: `${(estimatedCost(i.price) / maxPrice) * 100}%` }} />
+              <span style={{ width: `${(estimatedCost(i) / maxPrice) * 100}%` }} />
             </div>
           )}
           {i.price?.note && (
@@ -70,11 +78,19 @@ function buildRows(cat: Category, maxPrice: number): Row[] {
     });
     rows.push(
       {
+        label: "Event type",
+        value: () => null,
+        render: (i) =>
+          i.eventType
+            ? `${EVENT_TYPE_LABELS[i.eventType]}${
+                i.eventType === "family_stay" && i.stayNights ? ` · ${i.stayNights} nights` : ""
+              }`
+            : "—",
+      },
+      {
         label: "Setting",
         value: () => null,
-        render: (i) => (
-          <span style={{ textTransform: "capitalize" }}>{i.location?.setting ?? "—"}</span>
-        ),
+        render: (i) => formatSetting(i),
       },
       {
         label: "Next open date",
@@ -118,7 +134,7 @@ export function ComparePage() {
   const items = useMemo(() => {
     const list = [...itemsByCategory(cat)];
     list.sort((a, b) => {
-      if (sort === "price") return estimatedCost(a.price) - estimatedCost(b.price) || 0;
+      if (sort === "price") return estimatedCost(a) - estimatedCost(b) || 0;
       if (sort === "rating") return (b.rating?.score ?? 0) - (a.rating?.score ?? 0);
       return a.name.localeCompare(b.name);
     });
@@ -133,7 +149,7 @@ export function ComparePage() {
     return list;
   }, [cat, sort]);
 
-  const maxPrice = Math.max(0, ...items.map((i) => estimatedCost(i.price)));
+  const maxPrice = Math.max(0, ...items.map((i) => estimatedCost(i)));
   const rows = buildRows(cat, maxPrice);
   const meta = CATEGORY_LABELS[cat];
 

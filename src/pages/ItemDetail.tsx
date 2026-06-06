@@ -1,57 +1,25 @@
 import type { ReactNode } from "react";
 import { Link, Navigate, useParams } from "react-router-dom";
-import { CATEGORY_LABELS, type Item } from "../types";
+import { CATEGORY_LABELS, EVENT_TYPE_LABELS } from "../types";
 import { getItem, linkedItems } from "../data";
 import {
   formatPrice,
   formatRating,
   formatCapacity,
   formatLocation,
+  formatSetting,
   formatDate,
 } from "../lib/format";
-import { scenarioTotal, formatTotal } from "../lib/budget";
+import { scenarioTotal, formatTotal, stayNights } from "../lib/budget";
+import { targetDateMatch } from "../lib/dates";
 import { StatusPill } from "../components/StatusPill";
+import { PhotoGallery } from "../components/PhotoGallery";
 
-function Gallery({ item }: { item: Item }) {
-  const photos = item.photos ?? [];
-  if (photos.length === 0) {
-    return (
-      <div className="detail-gallery single">
-        <div
-          className="g-main"
-          style={{
-            display: "grid",
-            placeItems: "center",
-            background: "var(--paper-2)",
-            fontSize: "4rem",
-          }}
-        >
-          {CATEGORY_LABELS[item.type].icon}
-        </div>
-      </div>
-    );
-  }
-  if (photos.length === 1) {
-    return (
-      <div className="detail-gallery single">
-        <img className="g-main" src={photos[0]} alt={item.name} />
-      </div>
-    );
-  }
-  return (
-    <div className="detail-gallery">
-      <img className="g-main" src={photos[0]} alt={item.name} />
-      <div className="g-side">
-        <img src={photos[1]} alt="" />
-        {photos[2] ? (
-          <img src={photos[2]} alt="" />
-        ) : (
-          <div style={{ background: "var(--paper-2)" }} />
-        )}
-      </div>
-    </div>
-  );
-}
+const DATE_MATCH_NOTE: Record<ReturnType<typeof targetDateMatch>, ReactNode> = {
+  available: <span style={{ color: "var(--sage)" }}>✓ open on a target date</span>,
+  conflict: <span style={{ color: "var(--st-passed)" }}>⚠ none of your dates open</span>,
+  unknown: <span className="faint">check 2026 availability</span>,
+};
 
 function FactRow({ k, v }: { k: string; v?: ReactNode }) {
   if (v == null || v === "—" || v === "") return null;
@@ -79,7 +47,11 @@ export function ItemDetail() {
         ← {meta.plural}
       </Link>
 
-      <Gallery item={item} />
+      <PhotoGallery
+        photos={item.photos ?? []}
+        alt={item.name}
+        placeholder={meta.icon}
+      />
 
       <div className="page-head" style={{ marginBottom: "2rem" }}>
         <div className="eyebrow">{meta.singular}</div>
@@ -148,8 +120,21 @@ export function ItemDetail() {
         <aside>
           <div className="factsheet">
             <FactRow k="Price" v={formatPrice(item.price)} />
+            {item.type === "venue" && item.eventType && (
+              <FactRow
+                k="Event type"
+                v={
+                  item.eventType === "family_stay"
+                    ? `${EVENT_TYPE_LABELS[item.eventType]} · ${stayNights(item)} nights`
+                    : EVENT_TYPE_LABELS[item.eventType]
+                }
+              />
+            )}
             {item.type === "venue" && (
               <FactRow k="Est. scenario total" v={formatTotal(scenarioTotal(item))} />
+            )}
+            {item.type === "venue" && (
+              <FactRow k="Target dates" v={DATE_MATCH_NOTE[targetDateMatch(item)]} />
             )}
             <FactRow k="Rating" v={item.rating?.score != null ? formatRating(item) : undefined} />
             <FactRow
@@ -158,11 +143,7 @@ export function ItemDetail() {
             />
             <FactRow
               k="Setting"
-              v={
-                item.location?.setting ? (
-                  <span style={{ textTransform: "capitalize" }}>{item.location.setting}</span>
-                ) : undefined
-              }
+              v={item.location?.setting ? formatSetting(item) : undefined}
             />
             <FactRow k="Lead time" v={item.availability?.leadTimeWeeks ? `${item.availability.leadTimeWeeks} wks` : undefined} />
             {item.availability?.openDates?.length ? (

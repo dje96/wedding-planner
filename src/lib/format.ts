@@ -1,17 +1,19 @@
-import type { Item, Price } from "../types";
+import type { Item, Location, Price } from "../types";
 
 const UNIT_SUFFIX: Record<NonNullable<Price["unit"]>, string> = {
   total: "",
   per_person: " pp",
   per_hour: "/hr",
   per_day: "/day",
+  per_night: "/night",
+  per_week: "/week",
   from: "",
 };
 
 export function formatPrice(price?: Price): string {
   if (!price || price.amount == null) return "—";
-  const currency = price.currency || "GBP";
-  const formatted = new Intl.NumberFormat("en-GB", {
+  const currency = price.currency || "USD";
+  const formatted = new Intl.NumberFormat("en-US", {
     style: "currency",
     currency,
     maximumFractionDigits: 0,
@@ -47,6 +49,17 @@ export function formatLocation(item: Item): string {
   const l = item.location;
   if (!l) return "—";
   return [l.city, l.region].filter(Boolean).join(", ") || l.address || "—";
+}
+
+const SETTING_LABELS: Record<NonNullable<Location["setting"]>, string> = {
+  indoor: "Indoor",
+  outdoor: "Outdoor",
+  both: "Indoor, Outdoor",
+};
+
+export function formatSetting(item: Item): string {
+  const s = item.location?.setting;
+  return s ? SETTING_LABELS[s] : "—";
 }
 
 export function formatDate(iso?: string): string {

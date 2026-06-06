@@ -17,6 +17,20 @@ export type Category = "venue" | "photographer" | "catering" | "decor";
 
 export const CATEGORIES: Category[] = ["venue", "photographer", "catering", "decor"];
 
+/**
+ * How a venue would be used:
+ * - `family_stay`: the venue is rented for several days and the wedding doubles
+ *   as a holiday. `stayNights` drives the rental cost (beachfront homes default
+ *   to a 7-night week — see ASSUMED_STAY_NIGHTS in config).
+ * - `day_of`: a more typical single-day celebration.
+ */
+export type EventType = "family_stay" | "day_of";
+
+export const EVENT_TYPE_LABELS: Record<EventType, string> = {
+  family_stay: "Family stay",
+  day_of: "Day-of event",
+};
+
 export const CATEGORY_LABELS: Record<Category, { singular: string; plural: string; icon: string }> = {
   venue: { singular: "Venue", plural: "Venues", icon: "🏛️" },
   photographer: { singular: "Photographer", plural: "Photographers", icon: "📷" },
@@ -50,7 +64,7 @@ export interface Price {
   amount?: number;
   currency?: string; // ISO code, e.g. "GBP", "USD". Defaults to GBP in the UI.
   /** How the price is charged, for honest comparison. */
-  unit?: "total" | "per_person" | "per_hour" | "per_day" | "from";
+  unit?: "total" | "per_person" | "per_hour" | "per_day" | "per_night" | "per_week" | "from";
   /** Free-text qualifier, e.g. "Saturday, peak season" or "8-hour package". */
   note?: string;
 }
@@ -118,6 +132,12 @@ export interface Item {
   rating?: Rating;
   contact?: Contact;
 
+  /** Venues only: how you'd use this venue. */
+  eventType?: EventType;
+  /** Venues only, for `family_stay`: number of nights rented. Drives the rental
+   *  cost when the price is a weekly or per-night rate. */
+  stayNights?: number;
+
   status?: Status;
   /** Your own running notes — the one field expected to be hand-edited. */
   notes?: string;
@@ -129,4 +149,25 @@ export interface Item {
 
   /** ISO timestamp set when the item was ingested. */
   addedAt?: string;
+
+  // -- Review queue only (candidates written by Scout into data/review/) -----
+  /** Scout's one-line reason this candidate fits / what's unknown. */
+  scoutNote?: string;
+  /** ISO date a Scout run surfaced this candidate. */
+  scoutedAt?: string;
+}
+
+/**
+ * A candidate Scout has rejected — recorded in `data/dismissed.json` so future
+ * Scout runs skip it. Matched on `url` (preferred) or `name` + `category`.
+ */
+export interface DismissedEntry {
+  id: string;
+  name: string;
+  url: string;
+  category: Category;
+  /** ISO date the candidate was dismissed. */
+  dismissedAt?: string;
+  /** Optional free-text reason. */
+  reason?: string;
 }

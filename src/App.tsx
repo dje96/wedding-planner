@@ -1,21 +1,12 @@
 import { NavLink, Outlet } from "react-router-dom";
 import { CATEGORIES, CATEGORY_LABELS } from "./types";
-import { ALL_ITEMS, VENUES, countsByCategory } from "./data";
-import { scenarioTotal, formatTotal } from "./lib/budget";
-
-function leadingVenueTotal(): number {
-  if (VENUES.length === 0) return 0;
-  // The most-progressed venue (booked > shortlisted > …), tie-broken by name.
-  const rank = ["booked", "shortlisted", "quoted", "contacted", "considering", "passed"];
-  const lead = [...VENUES].sort(
-    (a, b) => rank.indexOf(a.status ?? "considering") - rank.indexOf(b.status ?? "considering")
-  )[0];
-  return scenarioTotal(lead);
-}
+import { ALL_ITEMS, countsByCategory, REVIEW_ITEMS } from "./data";
+import { budgetStatus, leadingScenarioTotal, formatTotal } from "./lib/budget";
 
 export function App() {
   const counts = countsByCategory();
-  const total = leadingVenueTotal();
+  const total = leadingScenarioTotal();
+  const budget = budgetStatus(total);
 
   return (
     <div className="app">
@@ -36,6 +27,15 @@ export function App() {
           >
             <span className="nav-icon">⇄</span> Compare
           </NavLink>
+          <NavLink
+            to="/review"
+            className={({ isActive }) => `nav-link ${isActive ? "active" : ""}`}
+          >
+            <span className="nav-icon">🔎</span> Review
+            {REVIEW_ITEMS.length > 0 && (
+              <span className="nav-count nav-count-badge">{REVIEW_ITEMS.length}</span>
+            )}
+          </NavLink>
 
           <div className="nav-group-label">Categories</div>
           {CATEGORIES.map((cat) => (
@@ -52,10 +52,26 @@ export function App() {
         </nav>
 
         <div className="sidebar-foot">
-          <div className="foot-label">Leading estimate</div>
-          <div className="foot-value tnum">{total > 0 ? formatTotal(total) : "—"}</div>
+          <div className="foot-label">Budget</div>
+          <div className="foot-value tnum">{formatTotal(budget.budget)}</div>
+          <div className="foot-bar">
+            <span
+              className={budget.over ? "over" : ""}
+              style={{ width: `${Math.min(100, budget.pct)}%` }}
+            />
+          </div>
           <div className="foot-sub">
-            {ALL_ITEMS.length} options tracked · top venue scenario
+            {total > 0 ? (
+              budget.over ? (
+                <span style={{ color: "var(--claret)" }}>
+                  {formatTotal(-budget.remaining)} over · leading scenario
+                </span>
+              ) : (
+                <>{formatTotal(budget.remaining)} left · leading scenario</>
+              )
+            ) : (
+              <>{ALL_ITEMS.length} options tracked</>
+            )}
           </div>
         </div>
       </aside>
