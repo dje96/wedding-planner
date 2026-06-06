@@ -1,0 +1,10 @@
+node_modules
+dist
+*.local
+.DS_Store
+*.tsbuildinfo
+.cache
+
+# Local, machine-specific Claude Code config (keep project settings.json tracked)
+.claude/settings.local.json
+.claude/worktrees/

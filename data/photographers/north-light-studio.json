@@ -1,0 +1,20 @@
+{
+  "id": "north-light-studio",
+  "type": "photographer",
+  "name": "North Light Studio",
+  "url": "https://example.com/north-light-studio",
+  "venueId": "riverside-mill",
+  "description": "Editorial, fine-art coverage with a clean, bright aesthetic. Single shooter with optional second, fine-art album included in every package.",
+  "photos": [
+    "https://images.unsplash.com/photo-1519741497674-611481863552?w=1200&q=80"
+  ],
+  "price": { "amount": 2950, "currency": "GBP", "unit": "total", "note": "Full day + fine-art album" },
+  "location": { "city": "Winchester", "region": "Hampshire" },
+  "rating": { "score": 4.7, "count": 71, "source": "Hitched" },
+  "contact": { "name": "Tom Reilly", "email": "book@example.com" },
+  "status": "considering",
+  "notes": "Album included is a nice touch. Slightly less to my taste than Luminous.",
+  "tags": ["editorial", "fine-art", "album-included"],
+  "attributes": { "hours": "full day", "secondShooter": "+£350", "albumIncluded": "yes", "galleryTurnaround": "4 weeks" },
+  "addedAt": "2026-06-06"
+}
