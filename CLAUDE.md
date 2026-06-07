@@ -157,6 +157,21 @@ Hand-set planner values (not from links): `BUDGET` (currently $30,000 USD),
 (Duncan's target: a Saturday in late Aug or early Oct 2026). Editing these
 re-renders the budget bar and date highlighting; they never touch option data.
 
+### Preferences — `data/preferences.json`
+
+Per-category planning steer Duncan sets in the **Preferences** tab: for each
+category (`venue`, `photographer`, `catering`, `decor`) an optional `priceLimit`
+(a spend ceiling for *that area*, in `CURRENCY` — tighter and more local than the
+overall `BUDGET`) and a free-text `context` describing the vibe / style /
+must-haves he wants. The shape is `Record<Category, { priceLimit?, context? }>`
+(`Preferences` in `src/types.ts`); `src/data.ts` loads it into `PREFERENCES`.
+
+Two consumers: the Preferences tab renders/edits it, and **`/scout` reads it**
+(SKILL.md step 1) — the `context` becomes search criteria and the `priceLimit`
+becomes the category's budget flag. Like the review triage, the tab saves
+through a dev-only endpoint (`/__preferences/save` in `vite.config.ts`), so edits
+persist only under `npm run dev`. You can also edit the JSON file by hand.
+
 ## Scouting & the Review queue
 
 The `/scout` skill (`.claude/skills/scout/`) finds candidate options Duncan
@@ -188,15 +203,17 @@ These two buttons hit a **dev-only endpoint** (`/__review/add`,
 - **Vite + React + TypeScript**, hash-routed SPA, run locally.
 - `data/<category>/*.json` is the database. `src/data.ts` globs it at build time
   (`import.meta.glob`), so adding/removing files is all it takes. The same glob
-  also loads two other kinds of file, told apart by path: `data/review/*.json`
+  also loads three other kinds of file, told apart by path: `data/review/*.json`
   (Scout candidates awaiting triage → `REVIEW_ITEMS`, kept out of the tracked
-  options) and `data/dismissed.json` (the dismissed ledger → `DISMISSED`).
+  options), `data/dismissed.json` (the dismissed ledger → `DISMISSED`), and
+  `data/preferences.json` (per-category price limits & vibe → `PREFERENCES`).
 - `src/types.ts` — the data model. `src/config.ts` — hand-set settings.
   `src/lib/` — formatting, budget/stay rollups (`budget.ts`), date matching
   (`dates.ts`), Scout fit flags (`scout.ts`).
 - Pages: `Overview` (venue dossiers, stat band, budget bar + target dates),
   `CategoryPage` (card grid), `ComparePage` (spec-sheet table with "best"
-  flags), `ReviewPage` (Scout candidate triage — see below), `ItemDetail`
+  flags), `ReviewPage` (Scout candidate triage — see below), `PreferencesPage`
+  (per-category price limits & vibe context, fed to `/scout`), `ItemDetail`
   (with `PhotoGallery` + `Lightbox` for browsing photos).
 - Design language: clean & minimal (Airbnb-inspired) — pure white surfaces,
   near-black ink (#222), neutral grays, a single coral accent (#FF385C), soft

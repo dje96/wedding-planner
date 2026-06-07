@@ -36,6 +36,12 @@ export function App() {
               <span className="nav-count nav-count-badge">{REVIEW_ITEMS.length}</span>
             )}
           </NavLink>
+          <NavLink
+            to="/preferences"
+            className={({ isActive }) => `nav-link ${isActive ? "active" : ""}`}
+          >
+            <span className="nav-icon">⚙</span> Preferences
+          </NavLink>
 
           <div className="nav-group-label">Categories</div>
           {CATEGORIES.map((cat) => (

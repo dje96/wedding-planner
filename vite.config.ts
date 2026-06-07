@@ -10,6 +10,7 @@ import { dirname, join, resolve } from "node:path";
 const DATA_DIR = resolve(__dirname, "data");
 const REVIEW_DIR = join(DATA_DIR, "review");
 const DISMISSED_FILE = join(DATA_DIR, "dismissed.json");
+const PREFERENCES_FILE = join(DATA_DIR, "preferences.json");
 
 const SLUG = /^[a-z0-9][a-z0-9-]*$/;
 const today = () => new Date().toISOString().slice(0, 10);
@@ -111,6 +112,62 @@ function reviewApi(): Plugin {
   };
 }
 
+/**
+ * Dev-only endpoint backing the Preferences tab. Like the review routes, this is
+ * the one place the browser may write to `data/`, and only while `npm run dev`
+ * runs.
+ *
+ *   POST /__preferences/save  { preferences } → overwrite data/preferences.json
+ *
+ * The body is sanitised to the known shape (one entry per category, each with an
+ * optional numeric `priceLimit` and string `context`) so a malformed POST can't
+ * write junk into the file the dashboard and `/scout` both read.
+ */
+const PREF_CATEGORIES = ["venue", "photographer", "catering", "decor"] as const;
+
+function sanitisePreferences(input: any): Record<string, { priceLimit?: number; context?: string }> {
+  const out: Record<string, { priceLimit?: number; context?: string }> = {};
+  for (const cat of PREF_CATEGORIES) {
+    const entry = input && typeof input === "object" ? input[cat] : undefined;
+    const clean: { priceLimit?: number; context?: string } = {};
+    if (entry && typeof entry === "object") {
+      const limit = Number(entry.priceLimit);
+      if (Number.isFinite(limit) && limit >= 0) clean.priceLimit = limit;
+      if (typeof entry.context === "string" && entry.context.trim()) {
+        clean.context = entry.context.trim();
+      }
+    }
+    out[cat] = clean;
+  }
+  return out;
+}
+
+function preferencesApi(): Plugin {
+  return {
+    name: "wedding-preferences-api",
+    apply: "serve",
+    configureServer(server) {
+      server.middlewares.use("/__preferences/save", async (req: any, res: any) => {
+        const json = (code: number, body: unknown) => {
+          res.statusCode = code;
+          res.setHeader("Content-Type", "application/json");
+          res.end(JSON.stringify(body));
+        };
+        try {
+          const chunks: Buffer[] = [];
+          for await (const c of req) chunks.push(c as Buffer);
+          const body = JSON.parse(Buffer.concat(chunks).toString("utf8") || "{}");
+          const preferences = sanitisePreferences(body.preferences);
+          writeFileSync(PREFERENCES_FILE, JSON.stringify(preferences, null, 2) + "\n");
+          return json(200, { ok: true, action: "save", preferences });
+        } catch (err) {
+          return json(500, { error: err instanceof Error ? err.message : String(err) });
+        }
+      });
+    },
+  };
+}
+
 export default defineConfig({
-  plugins: [react(), reviewApi()],
+  plugins: [react(), reviewApi(), preferencesApi()],
 });
