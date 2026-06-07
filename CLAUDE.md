@@ -181,7 +181,10 @@ under the dashboard's **Review** tab for Duncan to triage:
 These two buttons hit a **dev-only endpoint** (`/__review/add`,
 `/__review/dismiss`) wired up in `vite.config.ts`; they only work while
 `npm run dev` is running (the dashboard is otherwise a pure static read of
-`data/`). You can perform the same moves directly on the files if needed.
+`data/`). The same file (`vite.config.ts`) also serves `/__option/delete`,
+which backs the **Delete** button on every item's detail page — see "Editing /
+removing options" below. You can perform the same moves directly on the files
+if needed.
 
 ## Architecture
 
@@ -211,5 +214,11 @@ These two buttons hit a **dev-only endpoint** (`/__review/add`,
 ## Editing / removing options
 
 - Change status, notes, or a venue link: edit the JSON file directly.
-- Remove an option: delete its JSON file.
+- Remove an option: click **Delete** on its detail page (any category), or
+  delete its JSON file by hand. The button hits the dev-only `/__option/delete`
+  endpoint in `vite.config.ts` (works only under `npm run dev`), which removes
+  the JSON file **and** the option's `public/photos/<id>/` folder. Deleting a
+  **venue** also unlinks its paired suppliers (sets their `venueId` to `null`,
+  moving them to "Not yet paired") rather than deleting them — so removing a
+  venue never leaves a supplier pointing at one that's gone.
 - Re-link a supplier to a different venue: change its `venueId`.

@@ -3,6 +3,7 @@ import { REVIEW_ITEMS, DISMISSED } from "../data";
 import { CATEGORY_LABELS, EVENT_TYPE_LABELS, type Item } from "../types";
 import { formatPrice, formatLocation } from "../lib/format";
 import { scoutFlags, type FitLevel } from "../lib/scout";
+import { devMutate, isDevServerMissing } from "../lib/devApi";
 
 const FLAG_MARK: Record<FitLevel, string> = { ok: "✓", warn: "⚠", unknown: "–" };
 
@@ -10,21 +11,6 @@ type ActionState =
   | { kind: "idle" }
   | { kind: "busy"; id: string; action: "add" | "dismiss" }
   | { kind: "error"; message: string };
-
-/** Hit the dev-only endpoint that mutates the data files (see vite.config.ts).
- *  Only wired up under `npm run dev`; in a static build it 404s and we fall
- *  back to telling the user how to triage. */
-async function postAction(action: "add" | "dismiss", id: string): Promise<void> {
-  const res = await fetch(`/__review/${action}`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ id }),
-  });
-  if (!res.ok) {
-    const text = await res.text().catch(() => "");
-    throw new Error(text || `${res.status} ${res.statusText}`);
-  }
-}
 
 export function ReviewPage() {
   // Optimistic local copy: removing a card on success keeps the page snappy.
@@ -35,16 +21,15 @@ export function ReviewPage() {
   async function triage(item: Item, action: "add" | "dismiss") {
     setState({ kind: "busy", id: item.id, action });
     try {
-      await postAction(action, item.id);
+      await devMutate(`/__review/${action}`, { id: item.id });
       setItems((prev) => prev.filter((i) => i.id !== item.id));
       setState({ kind: "idle" });
     } catch (err) {
       setState({
         kind: "error",
-        message:
-          err instanceof Error && /404|Failed to fetch|NetworkError/.test(err.message)
-            ? "Add / Dismiss needs the dev server — run `npm run dev` (the buttons write data files, which the static build can't do)."
-            : `Couldn't ${action} this candidate: ${err instanceof Error ? err.message : String(err)}`,
+        message: isDevServerMissing(err)
+          ? "Add / Dismiss needs the dev server — run `npm run dev` (the buttons write data files, which the static build can't do)."
+          : `Couldn't ${action} this candidate: ${err instanceof Error ? err.message : String(err)}`,
       });
     }
   }

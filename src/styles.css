@@ -1314,6 +1314,48 @@ table.compare .cell-num {
   background: var(--paper-2);
   border-color: var(--ink-faint);
 }
+.btn-danger {
+  background: var(--st-passed);
+  border-color: var(--st-passed);
+  color: #fff;
+}
+.btn-danger:not(:disabled):hover {
+  background: color-mix(in srgb, var(--st-passed) 85%, #000);
+  border-color: color-mix(in srgb, var(--st-passed) 85%, #000);
+}
+
+/* Delete affordance on the item detail page — quiet until you reach for it. */
+.danger-zone {
+  margin-top: 1.5rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--line);
+}
+.btn-text-danger {
+  font-family: var(--sans);
+  font-size: 0.82rem;
+  font-weight: 600;
+  background: none;
+  border: none;
+  padding: 0;
+  color: var(--ink-faint);
+  cursor: pointer;
+  transition: color 0.18s;
+}
+.btn-text-danger:hover {
+  color: var(--st-passed);
+}
+.delete-confirm {
+  border: 1px solid color-mix(in srgb, var(--st-passed) 35%, transparent);
+  background: color-mix(in srgb, var(--st-passed) 6%, transparent);
+  border-radius: var(--radius);
+  padding: 0.9rem 1rem 1rem;
+}
+.delete-warn {
+  margin: 0 0 0.8rem;
+  font-size: 0.85rem;
+  line-height: 1.45;
+  color: var(--ink);
+}
 
 .review-banner {
   margin-bottom: 1.5rem;
