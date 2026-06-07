@@ -1,6 +1,14 @@
 import { defineConfig, type Plugin } from "vite";
 import react from "@vitejs/plugin-react";
-import { existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import {
+  existsSync,
+  mkdirSync,
+  readdirSync,
+  readFileSync,
+  rmSync,
+  statSync,
+  writeFileSync,
+} from "node:fs";
 import { dirname, join, resolve } from "node:path";
 
 // The `data/` directory at the project root is the "database": one JSON file
@@ -11,9 +19,82 @@ const DATA_DIR = resolve(__dirname, "data");
 const REVIEW_DIR = join(DATA_DIR, "review");
 const DISMISSED_FILE = join(DATA_DIR, "dismissed.json");
 const PREFERENCES_FILE = join(DATA_DIR, "preferences.json");
+// Photos are downloaded into public/photos/<id>/ — deleting an option clears
+// its folder here too, so removing an entry leaves nothing orphaned on disk.
+const PUBLIC_PHOTOS = resolve(__dirname, "public", "photos");
 
 const SLUG = /^[a-z0-9][a-z0-9-]*$/;
 const today = () => new Date().toISOString().slice(0, 10);
+
+/** Write a JSON response. Shared by every dev-only mutation endpoint below. */
+function sendJson(res: any, code: number, body: unknown): void {
+  res.statusCode = code;
+  res.setHeader("Content-Type", "application/json");
+  res.end(JSON.stringify(body));
+}
+
+/** Read and JSON-parse the POST body of a dev-endpoint request. */
+async function readBody(req: any): Promise<Record<string, any>> {
+  const chunks: Buffer[] = [];
+  for await (const c of req) chunks.push(c as Buffer);
+  return JSON.parse(Buffer.concat(chunks).toString("utf8") || "{}");
+}
+
+/** Every category directory under data/ (i.e. all of it except the review
+ *  queue), so we can find or scan tracked options without knowing the type. */
+function categoryDirs(): string[] {
+  let names: string[];
+  try {
+    names = readdirSync(DATA_DIR);
+  } catch {
+    return [];
+  }
+  return names
+    .filter((n) => n !== "review")
+    .map((n) => join(DATA_DIR, n))
+    .filter((dir) => {
+      try {
+        return statSync(dir).isDirectory();
+      } catch {
+        return false;
+      }
+    });
+}
+
+/** Locate a tracked option's file by id across every category dir. */
+function findOptionFile(id: string): string | null {
+  for (const dir of categoryDirs()) {
+    const file = join(dir, `${id}.json`);
+    if (existsSync(file)) return file;
+  }
+  return null;
+}
+
+/** Detach every supplier paired with a venue that's about to be deleted, so no
+ *  option is left pointing at a venue that no longer exists. Returns the ids
+ *  that were unlinked (now showing under "Not yet paired"). */
+function unlinkSuppliers(venueId: string): string[] {
+  const unlinked: string[] = [];
+  for (const dir of categoryDirs()) {
+    let files: string[];
+    try {
+      files = readdirSync(dir);
+    } catch {
+      continue;
+    }
+    for (const f of files) {
+      if (!f.endsWith(".json")) continue;
+      const file = join(dir, f);
+      const item = readJson<Record<string, any>>(file, {});
+      if (item && item.venueId === venueId) {
+        item.venueId = null;
+        writeFileSync(file, JSON.stringify(item, null, 2) + "\n");
+        unlinked.push(typeof item.id === "string" ? item.id : f.replace(/\.json$/, ""));
+      }
+    }
+  }
+  return unlinked;
+}
 
 // The `type` field is singular ("venue"), but options are filed under plural,
 // human-friendly directories ("data/venues/"). Reuse whichever directory that
@@ -57,15 +138,9 @@ function reviewApi(): Plugin {
     apply: "serve",
     configureServer(server) {
       const handle = (action: "add" | "dismiss") => async (req: any, res: any) => {
-        const json = (code: number, body: unknown) => {
-          res.statusCode = code;
-          res.setHeader("Content-Type", "application/json");
-          res.end(JSON.stringify(body));
-        };
+        const json = (code: number, body: unknown) => sendJson(res, code, body);
         try {
-          const chunks: Buffer[] = [];
-          for await (const c of req) chunks.push(c as Buffer);
-          const { id } = JSON.parse(Buffer.concat(chunks).toString("utf8") || "{}");
+          const { id } = await readBody(req);
 
           if (typeof id !== "string" || !SLUG.test(id)) {
             return json(400, { error: "bad or missing id" });
@@ -113,9 +188,55 @@ function reviewApi(): Plugin {
 }
 
 /**
- * Dev-only endpoint backing the Preferences tab. Like the review routes, this is
- * the one place the browser may write to `data/`, and only while `npm run dev`
- * runs.
+ * Dev-only delete endpoint. Like the review routes, this is the only place the
+ * browser is allowed to remove a file from the `data/` database, and only while
+ * `npm run dev` runs.
+ *
+ *   POST /__option/delete  { id } → permanently remove a tracked option
+ *
+ * Works for any category (venue / photographer / catering / decor) — the file
+ * is located by id across the category dirs. Deleting also clears the option's
+ * downloaded photos under public/photos/<id>/, and when a venue is removed its
+ * paired suppliers are unlinked (venueId → null) rather than left dangling.
+ */
+function optionApi(): Plugin {
+  return {
+    name: "wedding-option-api",
+    apply: "serve",
+    configureServer(server) {
+      server.middlewares.use("/__option/delete", async (req: any, res: any) => {
+        const json = (code: number, body: unknown) => sendJson(res, code, body);
+        try {
+          const { id } = await readBody(req);
+          if (typeof id !== "string" || !SLUG.test(id)) {
+            return json(400, { error: "bad or missing id" });
+          }
+          const file = findOptionFile(id);
+          if (!file) {
+            return json(404, { error: `no option ${id}` });
+          }
+          const item = readJson<Record<string, any>>(file, {});
+
+          // A venue anchors supplier scenarios — detach them before it goes.
+          const unlinked = item.type === "venue" ? unlinkSuppliers(id) : [];
+
+          rmSync(file);
+          const photoDir = join(PUBLIC_PHOTOS, id);
+          if (existsSync(photoDir)) rmSync(photoDir, { recursive: true, force: true });
+
+          return json(200, { ok: true, action: "delete", unlinked });
+        } catch (err) {
+          return json(500, { error: err instanceof Error ? err.message : String(err) });
+        }
+      });
+    },
+  };
+}
+
+/**
+ * Dev-only endpoint backing the Preferences tab. Like the review/delete routes,
+ * this is one of the few places the browser may write to `data/`, and only while
+ * `npm run dev` runs.
  *
  *   POST /__preferences/save  { preferences } → overwrite data/preferences.json
  *
@@ -148,20 +269,13 @@ function preferencesApi(): Plugin {
     apply: "serve",
     configureServer(server) {
       server.middlewares.use("/__preferences/save", async (req: any, res: any) => {
-        const json = (code: number, body: unknown) => {
-          res.statusCode = code;
-          res.setHeader("Content-Type", "application/json");
-          res.end(JSON.stringify(body));
-        };
         try {
-          const chunks: Buffer[] = [];
-          for await (const c of req) chunks.push(c as Buffer);
-          const body = JSON.parse(Buffer.concat(chunks).toString("utf8") || "{}");
+          const body = await readBody(req);
           const preferences = sanitisePreferences(body.preferences);
           writeFileSync(PREFERENCES_FILE, JSON.stringify(preferences, null, 2) + "\n");
-          return json(200, { ok: true, action: "save", preferences });
+          return sendJson(res, 200, { ok: true, action: "save", preferences });
         } catch (err) {
-          return json(500, { error: err instanceof Error ? err.message : String(err) });
+          return sendJson(res, 500, { error: err instanceof Error ? err.message : String(err) });
         }
       });
     },
@@ -169,5 +283,5 @@ function preferencesApi(): Plugin {
 }
 
 export default defineConfig({
-  plugins: [react(), reviewApi(), preferencesApi()],
+  plugins: [react(), reviewApi(), optionApi(), preferencesApi()],
 });

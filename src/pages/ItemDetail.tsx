@@ -14,6 +14,7 @@ import { scenarioTotal, formatTotal, stayNights } from "../lib/budget";
 import { targetDateMatch } from "../lib/dates";
 import { StatusPill } from "../components/StatusPill";
 import { PhotoGallery } from "../components/PhotoGallery";
+import { DeleteOption } from "../components/DeleteOption";
 
 const DATE_MATCH_NOTE: Record<ReturnType<typeof targetDateMatch>, ReactNode> = {
   available: <span style={{ color: "var(--sage)" }}>✓ open on a target date</span>,
@@ -166,6 +167,8 @@ export function ItemDetail() {
           <p className="faint" style={{ fontSize: "0.78rem", marginTop: "1rem" }}>
             Added {formatDate(item.addedAt)}
           </p>
+
+          <DeleteOption item={item} />
         </aside>
       </div>
     </div>
