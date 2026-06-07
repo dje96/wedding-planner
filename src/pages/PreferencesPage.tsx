@@ -16,16 +16,23 @@ type SaveState =
  *  is otherwise a static read of `data/`, so saving goes through the dev-only
  *  `/__preferences/save` endpoint (works under `npm run dev`). */
 export function PreferencesPage() {
-  // Editable working copy, seeded from the loaded file. A successful save also
-  // writes the file → HMR reload reseeds this with the persisted values.
+  // Editable working copy, seeded from the loaded file.
   const [prefs, setPrefs] = useState<Preferences>(() =>
+    structuredClone(PREFERENCES),
+  );
+  // Last-persisted snapshot. Seeded from the loaded file and advanced on every
+  // successful save. We track this locally rather than diffing against the
+  // imported `PREFERENCES` because that constant is baked in at module load
+  // (eager `import.meta.glob`) and isn't reseeded after the save writes the
+  // file — diffing against it would leave the page stuck on "Unsaved changes".
+  const [saved, setSaved] = useState<Preferences>(() =>
     structuredClone(PREFERENCES),
   );
   const [state, setState] = useState<SaveState>({ kind: "idle" });
 
   const dirty = useMemo(
-    () => JSON.stringify(prefs) !== JSON.stringify(PREFERENCES),
-    [prefs],
+    () => JSON.stringify(prefs) !== JSON.stringify(saved),
+    [prefs, saved],
   );
 
   function update(cat: Category, patch: Partial<Preferences[Category]>) {
@@ -37,6 +44,9 @@ export function PreferencesPage() {
     setState({ kind: "busy" });
     try {
       await devMutate("/__preferences/save", { preferences: prefs });
+      // Advance the persisted snapshot so `dirty` clears immediately — the
+      // file is written, but the in-memory `PREFERENCES` constant won't reseed.
+      setSaved(structuredClone(prefs));
       setState({ kind: "saved" });
     } catch (err) {
       setState({
