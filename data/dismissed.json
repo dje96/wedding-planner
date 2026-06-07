@@ -1,3 +1,67 @@
 {
-  "dismissed": []
+  "dismissed": [
+    {
+      "id": "jillian-knight-photography",
+      "name": "Jillian Knight Photography",
+      "url": "https://jillianknight.com/",
+      "category": "photographer",
+      "dismissedAt": "2026-06-07"
+    },
+    {
+      "id": "joe-payne-photography",
+      "name": "Joe Payne Photography",
+      "url": "https://www.joepayneweddingphotography.com/",
+      "category": "photographer",
+      "dismissedAt": "2026-06-07"
+    },
+    {
+      "id": "justin-clark-photography",
+      "name": "Justin Clark Photography",
+      "url": "https://www.justinclarkphotography.com/",
+      "category": "photographer",
+      "dismissedAt": "2026-06-07"
+    },
+    {
+      "id": "michelle-elyse-photography",
+      "name": "Michelle Elyse Photography",
+      "url": "https://michelleelysephotography.com/",
+      "category": "photographer",
+      "dismissedAt": "2026-06-07"
+    },
+    {
+      "id": "the-brown-house",
+      "name": "The Brown House",
+      "url": "https://www.brownhouseraleigh.com/",
+      "category": "venue",
+      "dismissedAt": "2026-06-07"
+    },
+    {
+      "id": "the-historic-wakefield-barn",
+      "name": "The Historic Wakefield Barn",
+      "url": "https://www.historicwakefieldbarn.com/",
+      "category": "venue",
+      "dismissedAt": "2026-06-07"
+    },
+    {
+      "id": "the-mims-house",
+      "name": "The Mims House",
+      "url": "https://raleighweddingvenue.com/",
+      "category": "venue",
+      "dismissedAt": "2026-06-07"
+    },
+    {
+      "id": "the-oaks-at-salem",
+      "name": "The Oaks at Salem",
+      "url": "https://theoaksatsalem.com/wedding-venues-raleigh-nc/",
+      "category": "venue",
+      "dismissedAt": "2026-06-07"
+    },
+    {
+      "id": "three-region-photography",
+      "name": "Three Region Photography",
+      "url": "https://threeregionnc.com/",
+      "category": "photographer",
+      "dismissedAt": "2026-06-07"
+    }
+  ]
 }
