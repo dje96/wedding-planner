@@ -1371,3 +1371,133 @@ table.compare .cell-num {
   font-size: 0.82rem;
   color: var(--ink-faint);
 }
+
+/* ---- Preferences --------------------------------------------------------- */
+.prefs-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 1.25rem;
+}
+.prefs-card {
+  padding: 1.25rem 1.35rem 1.4rem;
+}
+.prefs-card-head {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-bottom: 1.1rem;
+}
+.prefs-icon {
+  font-size: 1.2rem;
+  line-height: 1;
+}
+.prefs-card-head h3 {
+  margin: 0;
+  font-size: 1.05rem;
+}
+.prefs-field {
+  display: block;
+  margin-bottom: 1.1rem;
+}
+.prefs-field:last-child {
+  margin-bottom: 0;
+}
+.prefs-label {
+  display: block;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  margin-bottom: 0.45rem;
+}
+.prefs-hint {
+  display: block;
+  margin-top: 0.4rem;
+  font-size: 0.76rem;
+  color: var(--ink-faint);
+  line-height: 1.4;
+}
+
+/* Shared form-control styling (first inputs in the app). */
+.prefs-field input,
+.prefs-field textarea {
+  width: 100%;
+  font-family: var(--sans);
+  font-size: 0.9rem;
+  color: var(--ink);
+  background: var(--paper);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius);
+  padding: 0.55rem 0.7rem;
+  transition: border-color 0.18s, box-shadow 0.18s;
+}
+.prefs-field textarea {
+  resize: vertical;
+  line-height: 1.45;
+}
+.prefs-field input:focus,
+.prefs-field textarea:focus {
+  outline: none;
+  border-color: var(--claret);
+  box-shadow: 0 0 0 3px var(--claret-tint);
+}
+.prefs-field input::placeholder,
+.prefs-field textarea::placeholder {
+  color: var(--ink-faint);
+}
+
+/* Currency-prefixed number input. */
+.prefs-money {
+  display: flex;
+  align-items: stretch;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius);
+  overflow: hidden;
+  transition: border-color 0.18s, box-shadow 0.18s;
+}
+.prefs-money:focus-within {
+  border-color: var(--claret);
+  box-shadow: 0 0 0 3px var(--claret-tint);
+}
+.prefs-money-cur {
+  display: flex;
+  align-items: center;
+  padding: 0 0.7rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--ink-soft);
+  background: var(--paper-2);
+  border-right: 1px solid var(--line-strong);
+}
+.prefs-money input {
+  border: none;
+  border-radius: 0;
+  flex: 1;
+}
+.prefs-money input:focus {
+  box-shadow: none;
+}
+
+.prefs-actions {
+  position: sticky;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 1.5rem;
+  padding: 1rem 0;
+  background: linear-gradient(180deg, transparent, var(--paper) 35%);
+}
+.prefs-save {
+  flex: 0 0 auto;
+  padding-left: 1.4rem;
+  padding-right: 1.4rem;
+}
+.prefs-saved-note {
+  font-size: 0.82rem;
+  color: var(--ink-soft);
+}
+.prefs-saved-note.prefs-dirty {
+  color: var(--claret);
+}

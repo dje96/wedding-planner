@@ -158,6 +158,28 @@ export interface Item {
 }
 
 /**
+ * Per-category planning preferences, hand-set by Duncan in the Preferences tab
+ * and stored in `data/preferences.json`. Two knobs per category:
+ * - `priceLimit`: a spend ceiling for this area, in CURRENCY (config.ts). It's a
+ *   soft target Scout flags against — distinct from the overall `BUDGET`.
+ * - `context`: free-text describing the vibe / style / must-haves Duncan wants
+ *   in this area. Fed verbatim to the `/scout` skill so research matches taste.
+ * Both are optional; an unset category simply contributes no extra steer.
+ */
+export interface CategoryPreference {
+  priceLimit?: number;
+  context?: string;
+}
+
+/** The full preferences map: one entry per category. */
+export type Preferences = Record<Category, CategoryPreference>;
+
+/** A blank preferences map — every category present, nothing set. */
+export function emptyPreferences(): Preferences {
+  return Object.fromEntries(CATEGORIES.map((c) => [c, {}])) as Preferences;
+}
+
+/**
  * A candidate Scout has rejected — recorded in `data/dismissed.json` so future
  * Scout runs skip it. Matched on `url` (preferred) or `name` + `category`.
  */

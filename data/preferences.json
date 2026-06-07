@@ -1,0 +1,14 @@
+{
+  "venue": {
+    "priceLimit": 7000
+  },
+  "photographer": {
+    "priceLimit": 4000
+  },
+  "catering": {
+    "priceLimit": 6000
+  },
+  "decor": {
+    "priceLimit": 1000
+  }
+}

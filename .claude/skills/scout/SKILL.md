@@ -50,6 +50,21 @@ Pull the constraints from the repo so Duncan never re-states them:
 
 - `src/config.ts` → `BUDGET`, `CURRENCY`, `GUEST_ESTIMATE`, `TARGET_DATES`,
   `TARGET_DATE_LABEL`, `ASSUMED_STAY_NIGHTS`.
+- `data/preferences.json` → **per-category preferences** Duncan hand-set in the
+  Preferences tab. For the category you're scouting, read its entry:
+  - `priceLimit` — a spend ceiling for *this area* (in `CURRENCY`), separate
+    from the overall `BUDGET`. Rank/flag candidates against it the same way you
+    do `BUDGET` (step 3) — it's the tighter, category-specific constraint when
+    set. Normalise units the usual way before comparing.
+  - `context` — free text describing the **vibe / style / must-haves** Duncan
+    wants here. Treat it as first-class search criteria: fold it into both your
+    seeded and open queries (step 2) and your preference scoring (step 3),
+    alongside any `[criteria]` typed at invocation. If the typed criteria and
+    the stored context conflict, the typed criteria win (it's the more specific,
+    in-the-moment ask); otherwise combine them.
+
+  The file may be missing or have empty entries — that just means no extra steer
+  for that category; fall back to `BUDGET` and the typed `[criteria]`.
 - Existing options in `data/<category>/*.json` and pending candidates in
   `data/review/*.json` — for **de-dup** (step 4) and, if `--venue` is given, to
   resolve the **anchor venue**.
@@ -97,11 +112,13 @@ A funnel — cast wide, score cheap, cut hard:
 
 **Soft signals — rank, never silently exclude:**
 
-- **Budget** — compare against `BUDGET` (normalise per the price-unit rules in
-  CLAUDE.md: `per_person` × guests, `per_night`/`per_week` × stay). Flag
-  over-budget; don't drop.
+- **Budget** — compare against the category's `priceLimit` from
+  `data/preferences.json` if set, otherwise `BUDGET` (normalise per the
+  price-unit rules in CLAUDE.md: `per_person` × guests, `per_night`/`per_week` ×
+  stay). Flag over-limit; don't drop.
 - **Capacity** — compare against `GUEST_ESTIMATE`. Flag too-small/unknown.
-- **Preferences** — match the free-text criteria (style, setting, vibe).
+- **Preferences** — match the free-text criteria *and* the category's stored
+  `context` from `data/preferences.json` (style, setting, vibe, must-haves).
 - **Quality** — ratings/reviews/awards where available.
 
 Missing data at the snippet stage ranks **lower**, not **out** — step 5 fills
