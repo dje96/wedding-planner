@@ -1,0 +1,36 @@
+{
+  "id": "hidden-view-farm",
+  "type": "venue",
+  "name": "Hidden View Farm",
+  "url": "https://hiddenviewfarm.org/weddings/",
+  "description": "A 100+ acre English-country garden estate just outside Annapolis in Crownsville, with six distinctive outdoor ceremony and reception settings — the Koi Pond, the Gardens, the Meadow, the Manor House exterior and an Amish-built barn — threaded with hidden garden pathways and South River views. Styles range from formal to whimsical; it's a relaxed, greenery-rich garden venue rather than a ballroom, with couples free to start setting up the afternoon before.",
+  "photos": [
+    "https://hiddenviewfarm.org/wp-content/uploads/2024/01/Ceremony-Meadow-HiddenViewFarm.jpg",
+    "https://hiddenviewfarm.org/wp-content/uploads/2024/01/Meadow-Ceremony-HiddenViewFarm.jpg",
+    "https://hiddenviewfarm.org/wp-content/uploads/2024/01/WeddingReceptionTable-HiddenViewFarm.jpg",
+    "https://hiddenviewfarm.org/wp-content/uploads/2024/01/OutdoorReception-HiddenViewFarm.jpg",
+    "https://hiddenviewfarm.org/wp-content/uploads/2024/01/AmishBarn-Reception-HiddenViewFarm.jpg",
+    "https://hiddenviewfarm.org/wp-content/uploads/2024/01/CoupleDancing-HiddenViewFarm-1-683x1024.jpg"
+  ],
+  "eventType": "day_of",
+  "price": {
+    "amount": 1000,
+    "currency": "USD",
+    "unit": "from",
+    "note": "Venue space starting at $1,000; custom quotes provided on a private tour. Pulled 2026-06-07 from hiddenviewfarm.org — a starting figure only, well under the $7,000 venue limit, but the actual day-of-week / package total needs a quote."
+  },
+  "location": { "address": "Crownsville, MD", "city": "Crownsville", "region": "Crownsville (near Annapolis), MD", "setting": "both" },
+  "availability": {
+    "notes": "No public availability calendar — specific 2026 Saturday availability (late-Aug / early-Oct targets) must be confirmed by inquiry / tour. Outdoor garden venue."
+  },
+  "contact": { "website": "https://hiddenviewfarm.org/contact/" },
+  "tags": ["garden", "english-country", "farm-estate", "near-annapolis", "outdoor-ceremony", "open-vendor"],
+  "attributes": {
+    "cateringPolicy": "Open — a recommended caterer list is offered (The Bell House Catering, Classic Catering, New Gourmet Delight, The Palate Pleasers) but outside caterers are not restricted.",
+    "ceremonySpaces": "Six garden settings: Koi Pond, the Gardens, the Meadow, Manor House exterior; Amish barn for receptions",
+    "planning": "Day-of coordination and vendor management available; outside wedding planners welcomed",
+    "setting": "100+ acre English-country garden estate with South River views"
+  },
+  "scoutNote": "Strong open-vendor garden fit and the most budget-friendly of the shortlist — six outdoor garden settings, English-country styling, ~20 min from Annapolis. Meets the no-required-vendor must-have: caterers are recommended, not required. VERIFIED: starting price, catering/vendor policy, garden spaces, planning support. UNKNOWN: confirmed guest capacity (not published — the gardens + barn read comfortably for 40-60, confirm on tour) and 2026 Saturday availability (no public calendar).",
+  "scoutedAt": "2026-06-07"
+}

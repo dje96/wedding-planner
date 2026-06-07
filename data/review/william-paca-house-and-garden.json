@@ -1,0 +1,53 @@
+{
+  "id": "william-paca-house-and-garden",
+  "type": "venue",
+  "name": "William Paca House & Garden",
+  "url": "https://www.annapolis.org/support/venue-rental/",
+  "description": "A meticulously restored two-acre 18th-century pleasure garden in the heart of downtown Annapolis, behind the colonial home of Declaration signer William Paca. Couples exchange vows outdoors among formal parterres, a wilderness garden, the domed Summerhouse, a Chippendale-style bridge and a fish-shaped pond, then dine on romantic tented terraces lit for the evening. Reviewers describe it as 'casual elegance' and 'a well-kept secret' — a timeless, classic garden setting rather than a ballroom or barn.",
+  "photos": [
+    "https://www.annapolis.org/wp-content/uploads/elementor/thumbs/VanDagna_090-1600-re8ed634i2qsvp81nf8pi070t55dm6r5hybiupom8k.jpg",
+    "https://www.annapolis.org/wp-content/uploads/elementor/thumbs/Bale_192-1067-re8ecykezegiatiyvbzoy23c226fwlxasx3n0hzrmc.jpg",
+    "https://www.annapolis.org/wp-content/uploads/elementor/thumbs/lauras-focus-photography-002-1067-re8edbq5n2yitczuqhogwyrsdgdkwddjiq8fqdg978.jpg",
+    "https://www.annapolis.org/wp-content/uploads/elementor/thumbs/DSC08646-re8ebe63lcbay7sw0nm2sgboexwf2rpel5yi7wbdzo.jpg",
+    "https://www.annapolis.org/wp-content/uploads/elementor/thumbs/CH1_9214-scaled-re8ebd89eia0mlu9657g7yk7tk11v2lo91b0qmcs5w.jpg",
+    "https://www.annapolis.org/wp-content/uploads/elementor/thumbs/JesBre-9679-scaled-re8ebf3xs6cl9triv60pcy350brsagt4xalzp69ztg.jpg",
+    "https://www.annapolis.org/wp-content/uploads/elementor/thumbs/OliviaReedPhoto-78-scaled-re8ebhxgcogg8nnfep8l2fdishdvxk4bxokg505tas.jpg",
+    "https://www.annapolis.org/wp-content/uploads/elementor/thumbs/kRASMEDIA_240927_160_09278-re8ebivajihqk9m297n7mx4zdv9959829t7xma4f4k.jpg",
+    "https://www.annapolis.org/wp-content/uploads/elementor/thumbs/William-Paca-Garden-credit-Hamilton-Photography-scaled-re8ebhxgcogg8nnfep8l2fdishdvxk4bxokg505tas.jpg",
+    "https://www.annapolis.org/wp-content/uploads/elementor/thumbs/Jesse-Jackie-William-Paca-Garden-credit-Jennifer-Cody-re8ebgzm5uf5x1osk6tyhxm273iipv0lljwynq77h0.jpg",
+    "https://www.annapolis.org/wp-content/uploads/elementor/thumbs/williampacahouse.styledshoot-004-re8ebivajihqk9m297n7mx4zdv9959829t7xma4f4k.jpg"
+  ],
+  "eventType": "day_of",
+  "price": {
+    "amount": 8500,
+    "currency": "USD",
+    "unit": "total",
+    "note": "$7,000-8,500 per event for a full wedding (varies by day of week — a Saturday lands at the top of the range, slightly over the $7,000 venue limit). Includes 5-hour access for ceremony + cocktails + reception + dancing, exclusive garden use, tented terraces with lighting, tables and chairs, private dressing area, on-site catering kitchen, and a 1-year Historic Annapolis membership. A Tue-Thu ceremony-only rental is $3,000 (2 hrs, up to 40 guests). Pulled 2026-06-07 from herecomestheguide.com + annapolis.org; reviewers note 'no hidden fees, no unexpected rules.'"
+  },
+  "capacity": { "max": 120, "seated": 120, "standing": 150 },
+  "location": { "address": "186 Prince George St, Annapolis, MD 21401", "city": "Annapolis", "region": "Annapolis, MD", "setting": "outdoor" },
+  "availability": {
+    "notes": "Events run April-October, so both target windows (late-Aug and early-Oct 2026 Saturdays) are in season. There is no public availability calendar for this venue — specific 2026 Saturday availability must be confirmed by inquiry. Events are typically scheduled 4:00-9:00pm."
+  },
+  "contact": {
+    "name": "Deb Terhune, Director of Sales & Private Events (Historic Annapolis)",
+    "phone": "410.990.4538",
+    "email": "weddings@annapolis.org",
+    "website": "https://www.annapolis.org/support/venue-rental/"
+  },
+  "tags": ["garden", "historic", "downtown-annapolis", "outdoor-ceremony", "tented-terrace", "classic", "timeless"],
+  "attributes": {
+    "cateringPolicy": "Open — bring your own caterer allowed (preferred list available; a $1,000 fee applies to choose a caterer NOT on the list). On-site catering kitchen.",
+    "ceremonySpaces": "Outdoor garden — by the Summerhouse, Chippendale bridge or pond; reception on tented terraces",
+    "included": "Tented terraces with lighting, tables and chairs, private dressing area, 1-year Historic Annapolis membership",
+    "season": "April-October",
+    "alcohol": "Bring-your-own or in-house bar options",
+    "music": "Some amplified-music restrictions apply"
+  },
+  "flags": [
+    { "level": "warn", "label": "Over $7k venue limit", "detail": "A Saturday lands near $8,500 — above the $7,000 per-area venue price limit (still well within the $30k overall budget)." },
+    { "level": "unknown", "label": "Off-list caterer fee", "detail": "Outside caterers are allowed, but a $1,000 fee applies for a caterer not on the preferred list." }
+  ],
+  "scoutNote": "Best match to the brief's 'classy and timeless garden' — a restored 18th-century formal garden in downtown Annapolis, fully outdoor ceremony + tented-terrace reception (not a house interior or church). Meets the open-vendor must-have: outside caterers are allowed (preferred list, $1,000 off-list fee). Capacity 120 seated comfortably fits ~60. VERIFIED: pricing, capacity, catering policy, season, contact. UNKNOWN: exact 2026 Saturday availability (no public calendar — inquire). FLAG: a Saturday lands near $8,500, just over the $7,000 venue price limit.",
+  "scoutedAt": "2026-06-07"
+}

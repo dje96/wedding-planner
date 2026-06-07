@@ -1,0 +1,44 @@
+{
+  "id": "the-woodlands-at-homestead-gardens",
+  "type": "venue",
+  "name": "The Woodlands at Homestead Gardens",
+  "url": "https://homesteadgardens.com/the-woodlands-at-homestead-gardens/",
+  "description": "A nature-forward garden-and-woodland event space at the Homestead Gardens estate in Davidsonville, about 20 minutes from Annapolis. Ceremonies take place at The Pergolas, framed by greenery; The Pavilion offers covered shelter to anchor the reception; and The Patio is an open-air zone for music and dancing. Set among cultivated gardens and woods at a working garden center — an outdoor, greenery-rich setting with no chapel or house interior.",
+  "photos": [
+    "https://homesteadgardens.com/wp-content/uploads/Woodlands-1.jpg",
+    "https://homesteadgardens.com/wp-content/uploads/the-patio-woodlands-scaled.jpg",
+    "https://homesteadgardens.com/wp-content/uploads/HG_Venue-pics-1024-2.jpg",
+    "https://homesteadgardens.com/wp-content/uploads/HG_Venue-pics-1024-8-scaled.jpg",
+    "https://homesteadgardens.com/wp-content/uploads/Walker-Wdg-924-380-scaled.jpg",
+    "https://homesteadgardens.com/wp-content/uploads/Walker-Wdg-924-51-scaled.jpg",
+    "https://homesteadgardens.com/wp-content/uploads/Woodlands-4.jpg",
+    "https://homesteadgardens.com/wp-content/uploads/Woodlands-6.jpg",
+    "https://homesteadgardens.com/wp-content/uploads/Woodlands-7.jpg",
+    "https://homesteadgardens.com/wp-content/uploads/Woodlands-9.jpg",
+    "https://homesteadgardens.com/wp-content/uploads/Woodlands-11.jpg",
+    "https://homesteadgardens.com/wp-content/uploads/Woodlands-12.jpg"
+  ],
+  "eventType": "day_of",
+  "price": {
+    "amount": 1500,
+    "currency": "USD",
+    "unit": "from",
+    "note": "Events from $1,500; full wedding-package pricing is by inquiry (Google Form). Pulled 2026-06-07 — a starting figure only, well under the $7,000 venue limit; the day-of total needs a quote."
+  },
+  "location": { "address": "Davidsonville, MD", "city": "Davidsonville", "region": "Davidsonville (near Annapolis), MD", "setting": "both" },
+  "availability": {
+    "notes": "No public availability calendar — confirm specific 2026 Saturday availability via the venue's inquiry form. Outdoor garden/woodland venue."
+  },
+  "contact": { "website": "https://homesteadgardens.com/the-woodlands-at-homestead-gardens/" },
+  "tags": ["garden", "woodland", "near-annapolis", "outdoor-ceremony", "pergola", "budget"],
+  "attributes": {
+    "ceremonySpaces": "The Pergolas (ceremony, framed by greenery), The Pavilion (covered reception), The Patio (open-air dancing/music)",
+    "included": "Exclusive access to the venue + surrounding gardens, on-site coordinator, ambient indoor/outdoor lighting, private restroom trailer, basic tables and chairs, reserved parking",
+    "setting": "Garden-and-woodland event space at a working garden center"
+  },
+  "flags": [
+    { "level": "unknown", "label": "Catering policy unconfirmed", "detail": "Whether outside caterers are allowed isn't stated anywhere — 'farm-to-table options' are referenced. Confirm by inquiry before relying on the open-vendor must-have." }
+  ],
+  "scoutNote": "A budget-friendly, greenery-rich garden/woodland option close to Annapolis (Davidsonville) — outdoor pergola ceremony + covered pavilion + open patio, exclusive garden access and an on-site coordinator included from $1,500. Good vibe match (nature-forward, no chapel or house interior). VERIFIED: spaces, inclusions, starting price. UNKNOWN (two real gaps to confirm by inquiry): guest capacity is not published, and the catering policy is not stated anywhere — 'farm-to-table options' are referenced but whether outside caterers are allowed (the must-have) is unconfirmed.",
+  "scoutedAt": "2026-06-07"
+}
