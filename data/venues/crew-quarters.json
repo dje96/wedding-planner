@@ -1,0 +1,75 @@
+{
+  "id": "crew-quarters",
+  "type": "venue",
+  "name": "Crew Quarters",
+  "url": "https://www.atlanticrealty-nc.com/outer-banks/crew-quarters",
+  "description": "A 16-bedroom oceanfront event home in the gated Pine Island Club of Corolla, themed around a high-end Life Saving Station. Every bedroom is a private-bath suite, served by an elevator. The private fenced backyard has a pool, hot tub, cabana bar and outdoor fireplace; inside there's a great room, gourmet kitchen, theater, arcade and the 'Bar-ge' full bar. Purpose-built for weddings — a guest review describes a beach ceremony in front of the house with the reception in the backyard/pool area, plus a rehearsal dinner and post-wedding brunch at the home over the week.",
+  "photos": [
+    "https://photos.barefoot.com/v3catl0714/images/properties/26018/n36hobl34z.jpg",
+    "https://photos.barefoot.com/v3catl0714/images/properties/26018/vgzrxiiq9g.jpg",
+    "https://photos.barefoot.com/v3catl0714/images/properties/26018/v620y1edo1.jpg",
+    "https://photos.barefoot.com/v3catl0714/images/properties/26018/k17zlil112.jpg",
+    "https://photos.barefoot.com/v3catl0714/images/properties/26018/qok4qc0x99.jpg",
+    "https://photos.barefoot.com/v3catl0714/images/properties/26018/jbn2i3wkma.jpg",
+    "https://photos.barefoot.com/v3catl0714/images/properties/26018/c4mib0dwj1.jpg",
+    "https://photos.barefoot.com/v3catl0714/images/properties/26018/ulr9abwv93.jpg",
+    "https://photos.barefoot.com/v3catl0714/images/properties/26018/pa79pohjl9.jpg",
+    "https://photos.barefoot.com/v3catl0714/images/properties/26018/x80m6avi5d.jpg",
+    "https://photos.barefoot.com/v3catl0714/images/properties/26018/a0ow9ij9da.jpg",
+    "https://photos.barefoot.com/v3catl0714/images/properties/26018/smz8i3lam1.jpg"
+  ],
+  "eventType": "family_stay",
+  "stayNights": 7,
+  "price": {
+    "amount": 19197,
+    "currency": "USD",
+    "unit": "per_week",
+    "note": "All-in for Oct 4-11, 2026 (Sun-Sun week covering the Oct 10 target): $16,870 rent + $175 admin + $2,152 tax = $19,197. Strongly seasonal — peak late-Aug, Aug 23-30 (covers Aug 29): $26,439 rent, $29,974 all-in. No additional event fee. Pulled 2026-06-07 from the site's booking-engine quote."
+  },
+  "capacity": {
+    "max": 80,
+    "seated": 80
+  },
+  "location": {
+    "address": "Pine Island Club, Corolla",
+    "city": "Corolla",
+    "region": "Outer Banks, NC",
+    "setting": "both"
+  },
+  "availability": {
+    "openDates": [
+      "2026-08-29",
+      "2026-10-10"
+    ],
+    "notes": "Checked 2026-06-07 via the site's availability calendar. Of the target Saturdays, Aug 29 (book Aug 23-30) and Oct 10 (book Oct 4-11) are open; Aug 22 and Oct 3 are booked. Rentals run Sunday-to-Sunday (Sunday turn day), so a Saturday wedding means booking the Sun-Sun week around it."
+  },
+  "rating": {
+    "score": 5,
+    "count": 4,
+    "source": "Atlantic Realty"
+  },
+  "contact": {
+    "name": "Atlantic Realty of the Outer Banks",
+    "website": "https://www.atlanticrealty-nc.com/outer-banks/crew-quarters"
+  },
+  "tags": [
+    "oceanfront",
+    "event-home",
+    "gated-community",
+    "outer-banks",
+    "large-party",
+    "beach-ceremony",
+    "no-event-fee"
+  ],
+  "attributes": {
+    "bedrooms": "16 (all with private bath)",
+    "eventCapacity": "80 guests",
+    "eventFee": "None — events up to 80 with no additional fee",
+    "outsideVendors": "Allowed — 11th Hour is a preferred partner, not required",
+    "outdoor": "Private fenced backyard with pool, hot tub, cabana bar, outdoor fireplace",
+    "amenities": "Elevator, great room, gourmet kitchen, theater, arcade, fitness room, full bar",
+    "beachWedding": "Yes — guest review confirms beach ceremony out front + backyard/pool reception"
+  },
+  "status": "considering",
+  "addedAt": "2026-06-07"
+}

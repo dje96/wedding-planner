@@ -16,6 +16,8 @@ export type FitLevel = "ok" | "warn" | "unknown";
 export interface Flag {
   level: FitLevel;
   label: string;
+  /** Optional longer explanation (tooltip / notice detail). */
+  detail?: string;
 }
 
 /** Estimated cost vs. the whole budget. A candidate's own cost alone blowing
@@ -52,4 +54,12 @@ export function datesFlag(item: Item): Flag {
 
 export function scoutFlags(item: Item): Flag[] {
   return [budgetFlag(item), capacityFlag(item), datesFlag(item)];
+}
+
+/** Authored caveats Scout wrote onto the item (unknowns to confirm / conflict
+ *  notices), mapped into the same display shape as the computed fit flags.
+ *  These cover things the computed checks above can't see — catering policy, a
+ *  required-vendor list, a price over the category limit, etc. */
+export function caveatFlags(item: Item): Flag[] {
+  return (item.flags ?? []).map((f) => ({ level: f.level, label: f.label, detail: f.detail }));
 }

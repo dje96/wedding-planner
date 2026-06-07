@@ -62,6 +62,20 @@
       "url": "https://threeregionnc.com/",
       "category": "photographer",
       "dismissedAt": "2026-06-07"
+    },
+    {
+      "id": "the-pine-island-lodge",
+      "name": "The Pine Island Lodge",
+      "url": "https://www.atlanticrealty-nc.com/outer-banks/the-pine-island-lodge",
+      "category": "venue",
+      "dismissedAt": "2026-06-07"
+    },
+    {
+      "id": "royal-palace",
+      "name": "Royal Palace",
+      "url": "https://www.keesouterbanks.com/booking/K7024-royal-palace-12-bedroom-oceanfront-home/66198",
+      "category": "venue",
+      "dismissedAt": "2026-06-07"
     }
   ]
 }

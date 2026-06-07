@@ -1,0 +1,41 @@
+{
+  "id": "historic-london-town-and-gardens",
+  "type": "venue",
+  "name": "Historic London Town & Gardens",
+  "url": "https://www.londontownweddings.com/weddings",
+  "description": "A 23-acre waterfront garden estate on the banks of the South River in Edgewater, minutes from downtown Annapolis. Ten acres of immaculate cultivated gardens, sweeping ceremony lawns and a 1760s historic complex (the William Brown House) give a classic, timeless backdrop, with a tented pavilion for the reception and a 185-foot pier into the river. A fully outdoor garden-and-waterfront setting rather than a ballroom.",
+  "photos": [
+    "https://static.wixstatic.com/media/6472d3_26aeadcf3aea485bac7af80f0797b587~mv2.jpg",
+    "https://static.wixstatic.com/media/6472d3_36ceb5fdb8fb4bb9a3a3fcfd6cab0703~mv2.jpg",
+    "https://static.wixstatic.com/media/6472d3_75a53d640d674249b3b63e69dc33b603~mv2.jpg",
+    "https://static.wixstatic.com/media/6472d3_5a681c55eb634eccb4ca02c5e9372d5af002.jpg",
+    "https://static.wixstatic.com/media/6472d3_c68c4486f5d9404a9350f446d0e7382af001.jpg",
+    "https://static.wixstatic.com/media/6472d3_51d85e06583d4bec9cc891c9cd9e9de3~mv2.jpg",
+    "https://static.wixstatic.com/media/6472d3_735237f9746f4544852be59734795d23~mv2.jpg"
+  ],
+  "eventType": "day_of",
+  "price": {
+    "currency": "USD",
+    "unit": "total",
+    "note": "Pricing is not published — by inquiry only. Standard rentals run mid-April through November (tent included in season); off-season is hourly. Request a quote. Checked 2026-06-07 — no figure on the site."
+  },
+  "capacity": { "max": 200, "seated": 200, "standing": 240 },
+  "location": { "address": "839 Londontown Rd, Edgewater, MD 21037", "city": "Edgewater", "region": "Edgewater (near Annapolis), MD", "setting": "outdoor" },
+  "availability": {
+    "notes": "Wedding season mid-April through November, so both target windows (late-Aug / early-Oct 2026 Saturdays) are in season. No public availability calendar — confirm specific Saturday availability by inquiry."
+  },
+  "contact": { "website": "https://www.londontownweddings.com/contact" },
+  "tags": ["garden", "waterfront", "historic", "near-annapolis", "south-river", "outdoor-ceremony", "tented-pavilion"],
+  "attributes": {
+    "cateringPolicy": "Approved caterer list — couples MUST choose from ~10 vetted caterers; fully open outside catering is not permitted.",
+    "ceremonySpaces": "Two garden ceremony lawns, 10 acres of gardens, waterfront grounds + 185ft pier on the South River; tented pavilion reception",
+    "included": "Tent (mid-Apr-Nov), pavilion with dressing suites, Camellia bridal suite, six restrooms, ~125 parking spaces, 3-hr setup + 1-hr cleanup, ceremony rehearsal",
+    "season": "Mid-April through November",
+    "restrictions": "Enclosed candles only (no sparklers/wish lanterns); professional installation for tent/pavilion decor; no wall-damaging adhesives; pets allowed"
+  },
+  "flags": [
+    { "level": "warn", "label": "Approved caterer list required", "detail": "Couples must choose from ~10 vetted caterers — conflicts with your no-required-vendor preference; fully open outside catering isn't permitted." }
+  ],
+  "scoutNote": "The most spectacular pure-garden + waterfront setting of the shortlist — 23 acres of gardens on the South River, classic and timeless, fully outdoor, with the tent included in season. Capacity (up to 200) easily holds ~60. FLAG against the must-have: this venue REQUIRES choosing a caterer from its ~10-caterer approved list — it does not allow a fully free choice of food vendor, so it's the weakest fit on the 'no required vendors' rule (kept on the list because the garden match is so strong — your call). UNKNOWN: price (by inquiry, not published) and specific 2026 Saturday availability.",
+  "scoutedAt": "2026-06-07"
+}

@@ -110,6 +110,28 @@ export interface Contact {
   website?: string;
 }
 
+/**
+ * A caveat surfaced on an option — either an **unknown** a Scout run couldn't
+ * verify (e.g. catering policy not published) or a **warn** notice that
+ * conflicts with a stated preference (e.g. a venue that requires an approved
+ * caterer list, or a price over the category limit). Rendered as a warning pill
+ * in the Review tab and as a notices block on the option's detail page.
+ *
+ * These are *authored* (Scout writes them, and they're hand-editable) — distinct
+ * from the budget/capacity/date fit flags the UI computes from settings in
+ * `src/lib/scout.ts`. Use `flags` for caveats those computed checks can't see.
+ * Preserved when a candidate is promoted from the Review queue to a tracked
+ * option, so a known gap stays visible until it's resolved.
+ */
+export interface ItemFlag {
+  /** "unknown" = a neutral gap to confirm (amber); "warn" = a caveat that conflicts with a preference (red). */
+  level: "unknown" | "warn";
+  /** Short pill text, e.g. "Catering policy unconfirmed". */
+  label: string;
+  /** Optional longer explanation shown as a tooltip and in the detail notices block. */
+  detail?: string;
+}
+
 export interface Item {
   /** Stable slug, matches the filename. e.g. "the-oak-barn". */
   id: string;
@@ -142,6 +164,10 @@ export interface Item {
   /** Your own running notes — the one field expected to be hand-edited. */
   notes?: string;
   tags?: string[];
+
+  /** Caveats worth a warning pill: unknowns to confirm or notices that conflict
+   *  with a preference. See `ItemFlag`. Authored by Scout, hand-editable. */
+  flags?: ItemFlag[];
 
   /** Category-specific extras that don't fit the shared shape, e.g.
    *  { "hours": "8", "secondShooter": "yes" } for a photographer. */
