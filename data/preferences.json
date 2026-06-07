@@ -1,12 +1,15 @@
 {
   "venue": {
-    "priceLimit": 7000
+    "priceLimit": 7000,
+    "context": "IMPORTANT: All venues should not require specific food vendors or photographers.\n\nOption 1: A beachfront house for a week long stay. Minimum 10 bedrooms, beachfront access for the wedding ceremony, reception to be held outside in the backyard. The yard should be spacious enough for the 40-60 guests.\n\nOption 2: Day-of wedding. Outdoor wedding venue with greenery, not inside a house or church. Vibe is classy and timeless, ideally in a garden or park of some sort."
   },
   "photographer": {
-    "priceLimit": 4000
+    "priceLimit": 4000,
+    "context": "Warm, timeless, film-like."
   },
   "catering": {
-    "priceLimit": 6000
+    "priceLimit": 6000,
+    "context": "Family style, simple food. Does not need to be fancy (eg. multi-course meal). Food trucks, pizza, or similar is fine."
   },
   "decor": {
     "priceLimit": 1000
