@@ -2,10 +2,12 @@ import { useState } from "react";
 import { REVIEW_ITEMS, DISMISSED } from "../data";
 import { CATEGORY_LABELS, EVENT_TYPE_LABELS, type Item } from "../types";
 import { formatPrice, formatLocation } from "../lib/format";
-import { scoutFlags, type FitLevel } from "../lib/scout";
+import { scoutFlags, caveatFlags, type FitLevel } from "../lib/scout";
 import { devMutate, isDevServerMissing } from "../lib/devApi";
+import { FilterBar } from "../components/FilterBar";
+import { applyFilters, EMPTY_FILTER, hasActiveFilters } from "../lib/filters";
 
-const FLAG_MARK: Record<FitLevel, string> = { ok: "✓", warn: "⚠", unknown: "–" };
+const FLAG_MARK: Record<FitLevel, string> = { ok: "✓", warn: "⚠", unknown: "?" };
 
 type ActionState =
   | { kind: "idle" }
@@ -17,6 +19,8 @@ export function ReviewPage() {
   // Writing the file also triggers Vite HMR, which reloads with fresh data.
   const [items, setItems] = useState<Item[]>(REVIEW_ITEMS);
   const [state, setState] = useState<ActionState>({ kind: "idle" });
+  const [filters, setFilters] = useState(EMPTY_FILTER);
+  const filtered = applyFilters(items, filters);
 
   async function triage(item: Item, action: "add" | "dismiss") {
     setState({ kind: "busy", id: item.id, action });
@@ -61,8 +65,29 @@ export function ReviewPage() {
           )}
         </div>
       ) : (
-        <div className="card-grid">
-          {items.map((item, i) => {
+        <>
+          <FilterBar
+            items={items}
+            value={filters}
+            onChange={setFilters}
+            resultCount={filtered.length}
+            noun="candidate"
+          />
+          {filtered.length === 0 ? (
+            <div className="empty">
+              <div className="empty-mark">🔎</div>
+              No candidates match these filters.
+              {hasActiveFilters(filters) && (
+                <div style={{ marginTop: "0.75rem" }}>
+                  <button className="btn-link" onClick={() => setFilters(EMPTY_FILTER)}>
+                    Clear filters
+                  </button>
+                </div>
+              )}
+            </div>
+          ) : (
+            <div className="card-grid">
+              {filtered.map((item, i) => {
             const photo = item.photos?.[0];
             const loc = formatLocation(item);
             const busy = state.kind === "busy" && state.id === item.id;
@@ -88,8 +113,12 @@ export function ReviewPage() {
                   </div>
 
                   <div className="review-flags">
-                    {scoutFlags(item).map((f, j) => (
-                      <span key={j} className={`flag flag-${f.level}`}>
+                    {[...scoutFlags(item), ...caveatFlags(item)].map((f, j) => (
+                      <span
+                        key={j}
+                        className={`flag flag-${f.level}`}
+                        title={f.detail ?? undefined}
+                      >
                         {FLAG_MARK[f.level]} {f.label}
                       </span>
                     ))}
@@ -129,7 +158,9 @@ export function ReviewPage() {
               </article>
             );
           })}
-        </div>
+            </div>
+          )}
+        </>
       )}
     </>
   );

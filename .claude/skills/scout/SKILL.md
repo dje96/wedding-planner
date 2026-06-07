@@ -176,6 +176,25 @@ skip the calendar step.
 leave the field unset and say so in `scoutNote` / `availability.notes` — an
 honest gap renders as a neutral "unknown" flag in the Review tab.
 
+**Capture caveats as structured `flags`.** Beyond the budget/capacity/date fit
+flags the UI computes from settings, record any *other* caveat as an `ItemFlag`
+in the `flags` array (`src/types.ts`) so it renders as a warning pill in the
+Review tab and a notices block on the detail page. Two levels:
+
+- `"unknown"` — a genuine gap you couldn't verify (amber pill). Use for things
+  the computed checks can't see, e.g. **catering policy not published**, an
+  unstated corkage rule, an unconfirmed wet/dry venue. (Don't duplicate the
+  computed ones — price, capacity and target-date gaps already flag themselves.)
+- `"warn"` — a fact that **conflicts with a stated preference** (red pill), e.g.
+  a venue that **requires an approved-caterer list** (against a "no required
+  vendors" steer), a price **over the category `priceLimit`** (the computed
+  budget flag only sees the overall `BUDGET`), or a capacity that scrapes the
+  guest count. Give each a short `label` and a one-line `detail`.
+
+This is exactly where the "what's unknown" half of your research lands as
+something Duncan can *see and act on* — not buried in prose. Mirror anything
+material here in the `scoutNote` too.
+
 ### 6. Write the researched candidates into the Review queue
 
 Write each of the 3–5 as one file to `data/review/<slug>.json`, where `<slug>`
@@ -186,12 +205,15 @@ is the kebab-case name (also the `id`). Conform to the `Item` type:
   `location`, `availability.openDates`, `photos` (remote URLs), `rating`,
   `description`, `contact`, `attributes`. For non-venue scouts set `venueId`
   from the anchor (else `null`).
+- **Add** `flags` (see step 5) — any unknown/conflict caveat the computed fit
+  flags can't see (catering policy, required-vendor list, over the category
+  limit). They persist when the candidate is promoted on Add.
 - **Add** `scoutNote` — the one-line "why it fits / what's unknown / what was
   verified" — and `scoutedAt` = today (ISO).
 - **Omit** `status` and `addedAt` (set on Add).
 
 The dashboard hot-reloads; the candidates appear under the **Review** tab with
-their photos, prices and date flags already populated.
+their photos, prices, date flags and caveat pills already populated.
 
 ### 7. Hand off to the Review tab
 

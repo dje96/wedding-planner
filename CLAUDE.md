@@ -146,6 +146,13 @@ See `src/types.ts` for the authoritative shape. Key points:
 - `attributes`: a free `{ key: value }` map for category-specific extras
   (photographer hours, corkage, accommodation, etc.). camelCase keys render
   nicely (e.g. `secondShooter` → "Second Shooter").
+- `flags`: an array of `{ level, label, detail? }` caveats — `level` is
+  `"unknown"` (an amber gap to confirm, e.g. catering policy not published) or
+  `"warn"` (a red notice that conflicts with a preference, e.g. an
+  approved-caterer-list requirement, or a price over the category limit). They
+  render as warning pills in the Review tab and a notices block on the detail
+  page, and survive the move into tracked options. Use them for caveats the
+  computed budget/capacity/date fit flags can't see; don't duplicate those.
 - `availability.openDates` (ISO `yyyy-mm-dd`): if any match a target date in
   `src/config.ts`, the venue is flagged as available for Duncan's dates.
 - `notes`: Duncan's own commentary — the one field meant to be hand-edited.

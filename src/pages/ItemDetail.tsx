@@ -67,6 +67,20 @@ export function ItemDetail() {
 
       <div className="detail-grid">
         <div>
+          {item.flags && item.flags.length > 0 && (
+            <div className="notices">
+              {item.flags.map((f, i) => (
+                <div key={i} className={`notice notice-${f.level}`}>
+                  <span className="notice-mark">{f.level === "warn" ? "⚠" : "?"}</span>
+                  <span className="notice-text">
+                    <strong>{f.label}</strong>
+                    {f.detail ? <> — {f.detail}</> : null}
+                  </span>
+                </div>
+              ))}
+            </div>
+          )}
+
           {item.description && <p className="desc">{item.description}</p>}
 
           {item.notes && <div className="detail-notes">“{item.notes}”</div>}

@@ -1268,6 +1268,145 @@ table.compare .cell-num {
   border-color: color-mix(in srgb, var(--st-passed) 35%, transparent);
   background: color-mix(in srgb, var(--st-passed) 8%, transparent);
 }
+.flag-unknown {
+  color: var(--ink-soft);
+  border-color: var(--line-strong);
+  background: var(--paper-2);
+}
+
+/* Detail-page notices — the expanded form of the warning pills, surfacing each
+   caveat with its full explanation. Amber for unknowns, coral-red for warns. */
+.notices {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 1.75rem;
+}
+.notice {
+  display: flex;
+  gap: 0.6rem;
+  align-items: baseline;
+  padding: 0.7rem 0.9rem;
+  border-radius: var(--radius);
+  border: 1px solid var(--line);
+  font-size: 0.9rem;
+  line-height: 1.45;
+}
+.notice-mark {
+  font-weight: 700;
+  flex-shrink: 0;
+}
+.notice-text strong {
+  font-weight: 600;
+}
+.notice-unknown {
+  color: var(--ink);
+  border-color: var(--line-strong);
+  background: var(--paper-2);
+}
+.notice-unknown .notice-mark {
+  color: var(--ink-soft);
+}
+.notice-warn {
+  color: color-mix(in srgb, var(--st-passed) 85%, #000);
+  border-color: color-mix(in srgb, var(--st-passed) 35%, transparent);
+  background: color-mix(in srgb, var(--st-passed) 7%, transparent);
+}
+
+/* Faceted filter bar — Review tab + category pages */
+.filter-bar {
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  padding: 0.9rem 1.1rem;
+  margin-bottom: 1.75rem;
+  box-shadow: var(--shadow-sm);
+}
+.filter-bar-head {
+  display: flex;
+  align-items: baseline;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+.filter-bar-title {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+.filter-bar-count {
+  font-size: 0.82rem;
+  color: var(--ink-soft);
+}
+.filter-clear {
+  margin-left: auto;
+  font-family: var(--sans);
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--claret);
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+}
+.filter-clear:hover {
+  text-decoration: underline;
+}
+.filter-groups {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+.filter-group {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+}
+.filter-group-label {
+  flex-shrink: 0;
+  width: 3.25rem;
+  padding-top: 0.4rem;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--ink-faint);
+}
+.filter-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+.filter-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-family: var(--sans);
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 0.3rem 0.65rem;
+  border-radius: 100px;
+  border: 1px solid var(--line-strong);
+  background: var(--surface);
+  color: var(--ink);
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s, color 0.15s;
+}
+.filter-chip:hover {
+  border-color: var(--ink-faint);
+}
+.filter-chip.active {
+  background: var(--claret);
+  border-color: var(--claret);
+  color: #fff;
+}
+.filter-chip-count {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--ink-faint);
+}
+.filter-chip.active .filter-chip-count {
+  color: color-mix(in srgb, #fff 80%, var(--claret));
+}
 
 .review-foot {
   margin-top: auto;
