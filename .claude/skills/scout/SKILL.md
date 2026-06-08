@@ -1,23 +1,34 @@
 ---
 name: scout
-description: Scout the web for candidate wedding options (venues, photographers, catering, decor) that fit the planner's settings and a location/preferences, deeply research a tight shortlist (real pricing, date availability, photos) and write them into the Review queue for Duncan to add or dismiss. Use when Duncan wants to FIND new options he doesn't have links for yet — "find venues in X", "scout photographers near the Oak Barn", "/scout venue Cornwall". NOT for ingesting a link he already has (that's the paste-a-link loop in CLAUDE.md).
+description: Scout candidate wedding options (venues, photographers, catering, decor) and write them into the Review queue for Duncan to add or dismiss. Two modes, same output. DISCOVERY — find options he has no link for ("find venues in X", "scout photographers near the Oak Barn", "/scout venue Cornwall"): cast wide, narrow to a 3–5 shortlist, deeply research each (real pricing, date availability, photos). DIRECT URL — research one specific link he pastes ("/scout https://…", "scout this place: <url>"): research that single page and queue it. Both deeply research (browser helper: quote widgets, calendars, photo URLs) and land in the Review tab. Use DIRECT URL when you want a pasted link triaged in Review first; the paste-a-link loop in CLAUDE.md instead adds straight to tracked options.
 ---
 
 # Scout
 
-Scout turns **criteria** (a location plus preferences) into a **tightly
-researched shortlist of candidate options** the planner doesn't already track.
-It is the inverse of the ingestion loop: ingestion goes link → file, Scout goes
-criteria → researched candidates.
+Scout produces **deeply-researched candidate options** and queues them in the
+Review tab for Duncan to triage. It has **two modes**, and they share the same
+research engine and the same output:
 
-Scout casts a wide net, then **narrows to the 3–5 strongest candidates and
-researches each one properly** — driving the same data-retrieval methods the
-ingestion loop uses (the browser helper in `scripts/browse.mjs`) to pull **real
-pricing** (quote widgets), **real date availability** (operating the calendar
-against `TARGET_DATES`), and a **spread of photo URLs**. Each researched
-candidate is written as a row to the Review queue (the `items` table with
-`collection = 'review'`) for Duncan to triage under the dashboard's **Review**
-tab.
+- **Discovery** — given **criteria** (a location plus preferences), cast a wide
+  net, then **narrow to the 3–5 strongest candidates and research each one
+  properly**. This is the inverse of the ingestion loop: ingestion goes link →
+  file, discovery goes criteria → researched candidates.
+- **Direct URL** — given a **specific link Duncan pastes**, skip the search and
+  funnel entirely and **research that one page**, then queue it. The discovery
+  funnel (steps 2–4) doesn't apply; everything else does.
+
+Both drive the same data-retrieval methods the ingestion loop uses (the browser
+helper in `scripts/browse.mjs`) to pull **real pricing** (quote widgets), **real
+date availability** (operating the calendar against `TARGET_DATES`), and a
+**spread of photo URLs**. Each researched candidate is written as a row to the
+Review queue (the `items` table with `collection = 'review'`) for Duncan to
+triage under the dashboard's **Review** tab — whichever mode produced it.
+
+Direct URL vs. the CLAUDE.md paste-a-link loop: both research a pasted link, but
+they differ in **where the result lands**. Scout's Direct URL mode queues it in
+**Review** (`collection = 'review'`) for a triage decision; the paste-a-link loop
+writes it **straight into tracked options** (`collection = 'option'`). Reach for
+Scout when Duncan wants the link vetted in Review first.
 
 Depth over breadth: a few candidates Duncan can actually decide on beat a long
 list of unknowns. The only thing deferred to **Add** is the local photo
@@ -31,8 +42,20 @@ schema. The curated source domains live in [sources.md](./sources.md).
 ## Invocation
 
 ```
+# Discovery mode — criteria → 3–5 researched candidates
 /scout <category> [criteria] [--venue <id>] [--type family_stay|day_of]
+
+# Direct URL mode — one pasted link → one researched candidate
+/scout <url> [--category <category>] [--venue <id>]
 ```
+
+**Mode is chosen by the first argument.** If it's a URL (starts with `http://`
+or `https://`), run **Direct URL mode** (see "Direct URL mode" below). Otherwise
+run **Discovery mode** with the args below. A bare pasted link with no `/scout`
+prefix ("scout this place: <url>", or just a URL plus "queue this in review")
+also means Direct URL mode.
+
+**Discovery args:**
 
 - `<category>` — `venue` | `photographer` | `catering` | `decor`. Required.
 - `[criteria]` — free text: a location and/or preferences ("Cornwall coast,
@@ -41,9 +64,49 @@ schema. The curated source domains live in [sources.md](./sources.md).
 - `--venue <id>` — anchor a non-venue scout to an existing venue (see step 1).
 - `--type` — narrow a venue scout to one event type. Omit to search both.
 
-If category or criteria are missing and can't be inferred, ask once, then run.
+**Direct URL args:**
+
+- `<url>` — the page to research. Required.
+- `--category <category>` — the category to file it under. Optional — infer it
+  from the page if not given (CLAUDE.md step 2).
+- `--venue <id>` — for a non-venue link, the venue to pair it with (sets
+  `venueId`). Optional; if unclear leave it unpaired (`venueId: null`).
+
+If a required field is missing and can't be inferred, ask once, then run.
 
 ## Workflow
+
+The two modes share most of this workflow. **Discovery mode** runs all of steps
+1–7. **Direct URL mode** is a shortcut through the same steps — see immediately
+below; it skips only the search/funnel (steps 2–4).
+
+### Direct URL mode (one pasted link → one candidate)
+
+When the first argument is a URL, you already have the candidate — there's
+nothing to *find*, only to *research*. Run this path:
+
+1. **Load planner context** — do step 1 below (preferences, de-dup set, and the
+   anchor venue if `--venue` is given). You still need it: to score against the
+   category `priceLimit`/`context`, to **de-dup** (step 4 — refuse a link that's
+   already a tracked option, already queued in Review, or in the dismissed
+   ledger; tell Duncan rather than re-queue it), and to resolve the anchor.
+2. **Pick the category** — use `--category` if given, else infer it from the page
+   (CLAUDE.md step 2). For a non-venue link, set `venueId` from `--venue` (else
+   `null`).
+3. **Skip steps 2–4's search and funnel** — there's no wide net to cast. (You
+   still run the de-dup *check* from step 4 on this one URL, per point 1.)
+4. **Deeply research the single page — do step 5** exactly as written: real
+   pricing (quote widget), real date availability (operate the calendar against
+   `TARGET_DATES`) for venues, a spread of photo URLs, and structured `flags`
+   for any caveat. This is the whole value of routing a link through Scout rather
+   than straight to options — it arrives in Review already researched.
+5. **Write it as a review row — do step 6** (one `Item`, `node scripts/db.mjs
+   upsert <slug>.json --review`).
+6. **Hand off — do step 7**, for the one candidate.
+
+Everything else (the `Item` shape, the browser-helper technique, the "never
+invent data" rule, stopping the helper) is identical. The rest of this document
+describes Discovery mode; Direct URL mode borrows steps 1 and 5–7 from it.
 
 ### 1. Load planner context (no typing for Duncan)
 
