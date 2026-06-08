@@ -22,12 +22,16 @@ export const CATEGORIES: Category[] = ["venue", "photographer", "catering", "dec
  * - `family_stay`: the venue is rented for several days and the wedding doubles
  *   as a holiday. `stayNights` drives the rental cost (beachfront homes default
  *   to a 7-night week — see ASSUMED_STAY_NIGHTS in config).
+ * - `weekend_rental`: an Airbnb-type home rented just for the wedding weekend —
+ *   the venue, but not a full holiday. Defaults to 2 nights (Fri–Sun — see
+ *   WEEKEND_RENTAL_NIGHTS in config); `stayNights` drives the rental cost.
  * - `day_of`: a more typical single-day celebration.
  */
-export type EventType = "family_stay" | "day_of";
+export type EventType = "family_stay" | "weekend_rental" | "day_of";
 
 export const EVENT_TYPE_LABELS: Record<EventType, string> = {
   family_stay: "Family stay",
+  weekend_rental: "Weekend rental",
   day_of: "Day-of event",
 };
 
@@ -156,8 +160,8 @@ export interface Item {
 
   /** Venues only: how you'd use this venue. */
   eventType?: EventType;
-  /** Venues only, for `family_stay`: number of nights rented. Drives the rental
-   *  cost when the price is a weekly or per-night rate. */
+  /** Venues only, for `family_stay` / `weekend_rental`: number of nights rented.
+   *  Drives the rental cost when the price is a weekly or per-night rate. */
   stayNights?: number;
 
   status?: Status;

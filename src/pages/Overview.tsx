@@ -6,6 +6,7 @@ import {
   scenarioTotal,
   formatTotal,
   budgetStatus,
+  isMultiNight,
   leadingScenarioTotal,
   leadingVenue,
   stayNights,
@@ -43,7 +44,7 @@ function VenueDossier({ venue, index }: { venue: Item; index: number }) {
               {venue.eventType && (
                 <span className="chip">
                   {EVENT_TYPE_LABELS[venue.eventType]}
-                  {venue.eventType === "family_stay" ? ` · ${stayNights(venue)}n` : ""}
+                  {isMultiNight(venue) ? ` · ${stayNights(venue)}n` : ""}
                 </span>
               )}
               <StatusPill status={venue.status} />

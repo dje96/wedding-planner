@@ -1,14 +1,29 @@
 import { linkedItems, VENUES } from "../data";
 import type { Item, Price, Status } from "../types";
-import { ASSUMED_STAY_NIGHTS, BUDGET, CURRENCY, GUEST_ESTIMATE } from "../config";
+import {
+  ASSUMED_STAY_NIGHTS,
+  BUDGET,
+  CURRENCY,
+  GUEST_ESTIMATE,
+  WEEKEND_RENTAL_NIGHTS,
+} from "../config";
 
 export { GUEST_ESTIMATE };
 
+/** Whether a venue's event type implies a multi-night rental (so the nights
+ *  count is worth showing and the per-night/weekly rate gets multiplied). */
+export function isMultiNight(item: Item): boolean {
+  return item.eventType === "family_stay" || item.eventType === "weekend_rental";
+}
+
 /** Nights to assume for a venue: explicit `stayNights`, else the beachfront
- *  default for a family stay, else 1 (a day-of event has no multi-night cost). */
+ *  default for a family stay, the Fri–Sun default for a weekend rental, else 1
+ *  (a day-of event has no multi-night cost). */
 export function stayNights(item: Item): number {
   if (item.stayNights != null) return item.stayNights;
-  return item.eventType === "family_stay" ? ASSUMED_STAY_NIGHTS : 1;
+  if (item.eventType === "family_stay") return ASSUMED_STAY_NIGHTS;
+  if (item.eventType === "weekend_rental") return WEEKEND_RENTAL_NIGHTS;
+  return 1;
 }
 
 /**

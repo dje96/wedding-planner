@@ -10,7 +10,7 @@ import {
   formatSetting,
   formatDate,
 } from "../lib/format";
-import { scenarioTotal, formatTotal, stayNights } from "../lib/budget";
+import { scenarioTotal, formatTotal, isMultiNight, stayNights } from "../lib/budget";
 import { targetDateMatch } from "../lib/dates";
 import { StatusPill } from "../components/StatusPill";
 import { PhotoGallery } from "../components/PhotoGallery";
@@ -139,7 +139,7 @@ export function ItemDetail() {
               <FactRow
                 k="Event type"
                 v={
-                  item.eventType === "family_stay"
+                  isMultiNight(item)
                     ? `${EVENT_TYPE_LABELS[item.eventType]} · ${stayNights(item)} nights`
                     : EVENT_TYPE_LABELS[item.eventType]
                 }
