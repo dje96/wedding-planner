@@ -139,6 +139,11 @@ export function getItem(id: string): Item | undefined {
   return ALL_ITEMS.find((i) => i.id === id);
 }
 
+/** A Scout candidate awaiting triage (Review queue), looked up by id. */
+export function getReviewItem(id: string): Item | undefined {
+  return REVIEW_ITEMS.find((i) => i.id === id);
+}
+
 /** Non-venue items linked to a given venue. */
 export function linkedItems(venueId: string): Item[] {
   return ALL_ITEMS.filter((i) => i.type !== "venue" && i.venueId === venueId);
