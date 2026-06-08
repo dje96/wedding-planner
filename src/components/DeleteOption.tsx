@@ -1,12 +1,12 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { CATEGORY_LABELS, type Item } from "../types";
-import { linkedItems } from "../data";
-import { devMutate, isDevServerMissing } from "../lib/devApi";
+import { linkedItems, deleteOption } from "../data";
 
 /** Permanently remove a tracked option (any category). Two-step confirm guards
- *  against an accidental click; on success we leave the now-dead detail route
- *  and HMR reloads the dashboard from the freshly-shrunk `data/` directory. */
+ *  against an accidental click; on success we leave the now-dead detail route.
+ *  The delete writes through to Supabase and updates the in-memory store, so the
+ *  dashboard reflects the change as soon as you navigate back to it. */
 export function DeleteOption({ item }: { item: Item }) {
   const navigate = useNavigate();
   const [confirming, setConfirming] = useState(false);
@@ -21,15 +21,11 @@ export function DeleteOption({ item }: { item: Item }) {
     setBusy(true);
     setError(null);
     try {
-      await devMutate("/__option/delete", { id: item.id });
+      await deleteOption(item.id);
       navigate(item.type === "venue" ? "/" : `/category/${item.type}`, { replace: true });
     } catch (err) {
       setBusy(false);
-      setError(
-        isDevServerMissing(err)
-          ? "Deleting needs the dev server — run `npm run dev` (it removes the data file, which the static build can't do)."
-          : `Couldn't delete: ${err instanceof Error ? err.message : String(err)}`,
-      );
+      setError(`Couldn't delete: ${err instanceof Error ? err.message : String(err)}`);
     }
   }
 

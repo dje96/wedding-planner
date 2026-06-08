@@ -5,11 +5,19 @@ photographers, catering and decor**, organised around the **venue** as the key:
 every non-venue option links to the venue it's being considered for.
 
 The defining principle: **the user never transcribes data by hand.** Duncan
-pastes a link; Claude fetches it, extracts the details, and writes a data file.
-The dashboard reads those files. That ingestion loop is the whole point — keep
-it frictionless. (The user still exercises judgement over *which* options are
-worth tracking — e.g. picking from a `/scout` shortlist — but never retypes
-details that already exist on a page.)
+pastes a link; Claude fetches it, extracts the details, and saves a row. The
+dashboard reads those rows. That ingestion loop is the whole point — keep it
+frictionless. (The user still exercises judgement over *which* options are worth
+tracking — e.g. picking from a `/scout` shortlist — but never retypes details
+that already exist on a page.)
+
+**The database is Supabase** (a Postgres project). The app reads and writes it
+directly through the browser (`src/lib/supabase.ts`, `src/data.ts`). The
+`data/<category>/*.json` files are the original seed snapshot, kept for history;
+they are **no longer read by the app** and will drift from the live database as
+soon as anything is edited in-app, so don't treat them as the source of truth.
+New options are written as rows. See "Architecture" and the schema reference
+below.
 
 ## How to add an option from a link
 
@@ -27,17 +35,27 @@ link it to):
 3. **For non-venue items, set `venueId`.** Use the `id` of the venue it pairs
    with. If unclear, set `venueId: null` (it shows under "Not yet paired") and
    ask which venue, or link it once decided.
-4. **Write one JSON file** to `data/<category>/<slug>.json` where `<slug>` is a
-   kebab-case version of the name (this is also the `id`). Conform to the `Item`
-   type in `src/types.ts`. Only `id`, `type`, `name`, `url` are required —
-   include every other field the page actually provides, omit what it doesn't.
-   The UI degrades gracefully on missing fields, so never invent data.
+4. **Author the option as an `Item` and write it as a row.** Compose a JSON file
+   conforming to the `Item` type in `src/types.ts` (a kebab-case `<slug>` of the
+   name is the `id`), then upsert it to Supabase:
+   `node scripts/db.mjs upsert <path-to.json>`. Authoring the file first keeps
+   the data reviewable; the script writes the `items` row (storing the full Item
+   in the `data` jsonb column and mirroring `type`/`venue_id`). Only `id`,
+   `type`, `name`, `url` are required — include every other field the page
+   actually provides, omit what it doesn't. The UI degrades gracefully on missing
+   fields, so never invent data. (You can also insert directly with the Supabase
+   MCP if you prefer; the script is just the convenient path.)
 5. **Photos**: download a good spread (aim for ~10–15) into
-   `public/photos/<id>/01.jpg`, `02.jpg`, … and reference them as
-   `/photos/<id>/NN.jpg`. Downloading (rather than hot-linking) keeps the app
-   self-contained and survives source sites that block hotlinking. For sample/
-   placeholder data, remote URLs are fine. The first photo is the hero; the
-   detail page shows the rest in a browsable lightbox gallery.
+   `public/photos/<id>/01.jpg`, `02.jpg`, …, then upload them to Supabase
+   Storage and rewrite the item's `photos` to the public Storage URLs with
+   `node scripts/db.mjs photos` (it uploads every `public/photos/<id>/` folder
+   to the `photos` bucket and updates the matching item). Downloading first
+   (rather than hot-linking) survives source sites that block hotlinking; hosting
+   in Storage means a venue's photos show up in the **published** app with no
+   redeploy. `photos` ends up an array of full `https://…/storage/v1/object/
+   public/photos/<id>/NN.jpg` URLs; the app renders any http(s) URL directly, so
+   remote URLs are still fine for placeholders / un-uploaded Scout candidates.
+   The first photo is the hero; the detail page shows the rest in a lightbox.
 6. **For venues, set `eventType`** — `family_stay` (multi-day rental, wedding
    doubles as a holiday; also set `stayNights`), `weekend_rental` (an Airbnb-type
    home used as the venue for the wedding weekend only, not a full holiday —
@@ -89,7 +107,8 @@ link it to):
       enquiry-only), leave `price.amount` unset and note "request a quote" with
       what you tried.
 9. **Set `addedAt`** to today's date (ISO `yyyy-mm-dd`).
-10. The dashboard hot-reloads — the new option appears with no code change.
+10. Reload the dashboard — it fetches from Supabase on load, so the new row
+    appears with no code change.
 
 If a page can't be fetched at all (login wall, JS-only), tell Duncan what's
 missing and ask him to paste the key details, then still write the file. For a
@@ -167,20 +186,21 @@ Hand-set planner values (not from links): `BUDGET` (currently $30,000 USD),
 (Duncan's target: a Saturday in late Aug or early Oct 2026). Editing these
 re-renders the budget bar and date highlighting; they never touch option data.
 
-### Preferences — `data/preferences.json`
+### Preferences — the `preferences` table
 
 Per-category planning steer Duncan sets in the **Preferences** tab: for each
 category (`venue`, `photographer`, `catering`, `decor`) an optional `priceLimit`
 (a spend ceiling for *that area*, in `CURRENCY` — tighter and more local than the
 overall `BUDGET`) and a free-text `context` describing the vibe / style /
 must-haves he wants. The shape is `Record<Category, { priceLimit?, context? }>`
-(`Preferences` in `src/types.ts`); `src/data.ts` loads it into `PREFERENCES`.
+(`Preferences` in `src/types.ts`); `src/data.ts` loads it into `PREFERENCES`
+from the `preferences` table (one row per category).
 
-Two consumers: the Preferences tab renders/edits it, and **`/scout` reads it**
-(SKILL.md step 1) — the `context` becomes search criteria and the `priceLimit`
-becomes the category's budget flag. Like the review triage, the tab saves
-through a dev-only endpoint (`/__preferences/save` in `vite.config.ts`), so edits
-persist only under `npm run dev`. You can also edit the JSON file by hand.
+Two consumers: the Preferences tab renders/edits it (saving via
+`savePreferences` in `src/data.ts`, which upserts the rows), and **`/scout`
+reads it** (SKILL.md step 1) — the `context` becomes search criteria and the
+`priceLimit` becomes the category's budget flag. You can also edit the rows
+directly in Supabase (or via the MCP).
 
 ## Scouting & the Review queue
 
@@ -189,37 +209,58 @@ doesn't have links for yet. It casts a wide net, narrows to the **3–5 stronges
 candidates, and **researches each one properly** — using the same browser helper
 the ingestion loop uses to pull real pricing (quote widgets), real date
 availability (operating the calendar against `TARGET_DATES`), and a spread of
-photo *URLs*. It writes one researched file per candidate to
-`data/review/<slug>.json` (an `Item` with `scoutNote`/`scoutedAt`). They appear
-under the dashboard's **Review** tab for Duncan to triage:
+photo *URLs*. It writes one researched candidate per row into the `items` table
+with `collection = 'review'` (an `Item` with `scoutNote`/`scoutedAt`) — use
+`node scripts/db.mjs upsert <file.json> --review`. They appear under the
+dashboard's **Review** tab for Duncan to triage:
 
-- **Add** — promotes the candidate into the tracked options: the dev server
-  moves the file into `data/<category>/` as `status: considering` with today's
-  `addedAt`, dropping the scout-only fields. Because Scout already did the
-  pricing + availability research, the only ingestion work left is to **download
-  the photos locally** to `public/photos/<id>/` (step 5) and rewrite `photos` to
-  `/photos/<id>/NN.jpg` — plus re-confirm anything Scout left as unknown.
-- **Dismiss** — appends the candidate to `data/dismissed.json` and deletes the
-  review file. **Every future `/scout` run must skip dismissed candidates** —
-  the skill checks this ledger during de-dup.
+- **Add** — promotes the candidate into the tracked options: `promoteCandidate`
+  (`src/data.ts`) flips its `collection` to `'option'`, sets `status:
+  considering` with today's `addedAt`, and drops the scout-only fields. Because
+  Scout already did the pricing + availability research, the only ingestion work
+  left is to **download the photos locally** to `public/photos/<id>/` (step 5)
+  and rewrite `photos` to `/photos/<id>/NN.jpg` — plus re-confirm anything Scout
+  left as unknown.
+- **Dismiss** — inserts the candidate into the `dismissed_candidates` table and
+  deletes the review row. **Every future `/scout` run must skip dismissed
+  candidates** — the skill checks this ledger during de-dup.
 
-These two buttons hit a **dev-only endpoint** (`/__review/add`,
-`/__review/dismiss`) wired up in `vite.config.ts`; they only work while
-`npm run dev` is running (the dashboard is otherwise a pure static read of
-`data/`). The same file (`vite.config.ts`) also serves `/__option/delete`,
-which backs the **Delete** button on every item's detail page — see "Editing /
-removing options" below. You can perform the same moves directly on the files
-if needed.
+These buttons (and the **Delete** button on every detail page) write straight to
+Supabase through the browser via `src/data.ts` (`promoteCandidate`,
+`dismissCandidate`, `deleteOption`) — no dev server needed, so they work in the
+static build too. You can perform the same moves directly in Supabase if needed.
 
 ## Architecture
 
 - **Vite + React + TypeScript**, hash-routed SPA, run locally.
-- `data/<category>/*.json` is the database. `src/data.ts` globs it at build time
-  (`import.meta.glob`), so adding/removing files is all it takes. The same glob
-  also loads three other kinds of file, told apart by path: `data/review/*.json`
-  (Scout candidates awaiting triage → `REVIEW_ITEMS`, kept out of the tracked
-  options), `data/dismissed.json` (the dismissed ledger → `DISMISSED`), and
-  `data/preferences.json` (per-category price limits & vibe → `PREFERENCES`).
+- **Supabase (Postgres) is the database.** `src/lib/supabase.ts` holds the
+  client (configured from `VITE_SUPABASE_URL` / `VITE_SUPABASE_ANON_KEY` in
+  `.env.local` — see `.env.example`). `src/data.ts` fetches everything once at
+  bootstrap (`loadData()`, awaited in `main.tsx` before the app renders) into the
+  same live exports the app has always used (`ALL_ITEMS`, `VENUES`,
+  `REVIEW_ITEMS`, `DISMISSED`, `PREFERENCES`), and provides the mutation helpers
+  (`promoteCandidate`, `dismissCandidate`, `deleteOption`, `savePreferences`)
+  that write to Supabase and update those live stores in place.
+- **Schema** (three tables, created by migrations on the Supabase project):
+  - `items` — every option. The full `Item` lives in a `data` jsonb column;
+    `id`, `type`, `name`, `venue_id` (supplier→venue FK, `on delete set null`)
+    and `collection` (`'option'` tracked vs `'review'` Scout candidate) are
+    promoted to columns for indexing. One table holds both tracked options and
+    the Review queue, told apart by `collection`.
+  - `preferences` — one row per category (`price_limit`, `context`).
+  - `dismissed_candidates` — the dismissed ledger Scout de-dups against.
+  - A public Storage bucket **`photos`** holds option images; `data.photos` are
+    full public URLs into it (`node scripts/db.mjs photos` uploads + rewrites).
+  - **Auth & RLS**: the app is gated behind Supabase Auth (email/password). RLS
+    grants the `authenticated` role full CRUD and the `anon` role nothing, so the
+    publishable key in the browser bundle is useless without a login — safe to
+    publish. Photo *objects* stay publicly readable (so `<img>` works), but
+    listing/writing the bucket needs auth. Schema lives in the Supabase project's
+    migrations; `scripts/db.mjs` seeds/ingests; `src/database.types.ts` holds the
+    generated row types. See "Auth & publishing" below.
+- The legacy `data/<category>/*.json`, `data/review/*.json`,
+  `data/dismissed.json` and `data/preferences.json` files remain as the original
+  seed snapshot only — the app no longer reads them.
 - `src/types.ts` — the data model. `src/config.ts` — hand-set settings.
   `src/lib/` — formatting, budget/stay rollups (`budget.ts`), date matching
   (`dates.ts`), Scout fit flags (`scout.ts`).
@@ -234,18 +275,68 @@ if needed.
 
 ## Commands
 
-- `npm run dev` — local dev server (hot reload).
+- `npm run dev` — local dev server (hot reload). Needs `.env.local` (Supabase).
 - `npm run build` — type-check + production build to `dist/`.
 - `npm run preview` — serve the production build.
+- `node scripts/db.mjs seed` — (re)load every `data/*.json` file into Supabase.
+- `node scripts/db.mjs photos` — upload every `public/photos/<id>/` folder to the
+  `photos` Storage bucket and rewrite the matching item's `photos` to public URLs.
+- `node scripts/db.mjs upsert <file.json> [--review]` — upsert one option (or one
+  Scout candidate with `--review`); the ingestion-loop path.
 
 ## Editing / removing options
 
-- Change status, notes, or a venue link: edit the JSON file directly.
-- Remove an option: click **Delete** on its detail page (any category), or
-  delete its JSON file by hand. The button hits the dev-only `/__option/delete`
-  endpoint in `vite.config.ts` (works only under `npm run dev`), which removes
-  the JSON file **and** the option's `public/photos/<id>/` folder. Deleting a
-  **venue** also unlinks its paired suppliers (sets their `venueId` to `null`,
-  moving them to "Not yet paired") rather than deleting them — so removing a
-  venue never leaves a supplier pointing at one that's gone.
-- Re-link a supplier to a different venue: change its `venueId`.
+- Change status, notes, or a venue link: edit the option's `items` row in
+  Supabase — the simplest is to update the `data` jsonb (and the mirrored
+  `venue_id` column if you change the pairing). Or re-author the `Item` JSON and
+  `node scripts/db.mjs upsert <file.json>`.
+- Remove an option: click **Delete** on its detail page (any category), which
+  calls `deleteOption` (`src/data.ts`) to delete the row from Supabase **and**
+  clear its `photos/<id>/` folder from Storage. Deleting a **venue** first
+  unlinks its paired suppliers (sets their `venue_id` to `null`, moving them to
+  "Not yet paired") rather than deleting them — so removing a venue never leaves
+  a supplier pointing at one that's gone. (The local `public/photos/<id>/` seed
+  copy, if any, stays on disk — harmless.)
+- Re-link a supplier to a different venue: change its `venue_id` (and `venueId`
+  inside `data`).
+
+## Auth & publishing
+
+The app is gated behind **Supabase Auth** (email/password) so it can be hosted
+publicly: only the couple's accounts can read or write; RLS denies everyone else.
+
+- **Login flow**: `src/auth.tsx` (the `Login` form, `AuthContext`, `signOut`) and
+  the `Root` gate in `src/main.tsx`. The gate checks for a session, shows the
+  login screen if there's none, and only then loads data and renders the app.
+  Sessions persist in the browser, so a return visit skips the login. The
+  signed-in email + a **Sign out** link live in the sidebar (`src/App.tsx`).
+- **Accounts** are created with the admin-only SQL helper
+  `select public.create_app_user('email@example.com', 'password');` (run via the
+  Supabase MCP / SQL editor — `execute` is revoked from anon/authenticated). It
+  sets the GoTrue token fields and the `auth.identities` row correctly. To add
+  the fiancé (or anyone), call it with their email + a password. Change a
+  password with `update auth.users set encrypted_password =
+  extensions.crypt('new', extensions.gen_salt('bf')) where email = '…';`.
+- **Scripts** (`scripts/db.mjs`) write as an authenticated user — they sign in
+  with `SUPABASE_EMAIL` / `SUPABASE_PASSWORD` from `.env.local` (your own login)
+  before any write.
+- **Optional hardening** (Supabase dashboard → Authentication): enable *Leaked
+  password protection*; disable public sign-ups if you ever turn them on (we
+  create accounts by hand, so no open sign-up exists).
+
+### Deploying (Vercel)
+
+It's a static Vite SPA, so any static host works; Vercel is the smooth default:
+
+1. Push the repo to GitHub and "Import Project" in Vercel (framework auto-detects
+   as Vite; build `npm run build`, output `dist`).
+2. In the Vercel project's **Environment Variables**, set `VITE_SUPABASE_URL` and
+   `VITE_SUPABASE_ANON_KEY` (same publishable values as `.env.local`; do **not**
+   add the `SUPABASE_EMAIL`/`SUPABASE_PASSWORD` script vars — they aren't used by
+   the app). Redeploy.
+3. Add the deployed origin to Supabase → Authentication → URL Configuration
+   (Site URL / redirect allow-list) so auth works from the hosted domain.
+
+Because data + photos live in Supabase, adding venues later needs **no redeploy**
+— only code changes do. The `data/*.json` and `public/photos/` files are the
+original seed snapshot; they're not required by the deployed app.

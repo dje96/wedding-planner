@@ -1,9 +1,8 @@
 import { useMemo, useState } from "react";
-import { PREFERENCES } from "../data";
+import { PREFERENCES, savePreferences } from "../data";
 import { CATEGORIES, CATEGORY_LABELS, type Category, type Preferences } from "../types";
 import { BUDGET, CURRENCY } from "../config";
 import { formatTotal } from "../lib/budget";
-import { devMutate, isDevServerMissing } from "../lib/devApi";
 
 type SaveState =
   | { kind: "idle" }
@@ -12,19 +11,16 @@ type SaveState =
   | { kind: "error"; message: string };
 
 /** Per-category steer Duncan hand-sets: a spend ceiling and a vibe note. Both
- *  are read by `/scout` so research matches his budget and taste. The dashboard
- *  is otherwise a static read of `data/`, so saving goes through the dev-only
- *  `/__preferences/save` endpoint (works under `npm run dev`). */
+ *  are read by `/scout` so research matches his budget and taste. Saving writes
+ *  the `preferences` table in Supabase via `savePreferences` (src/data.ts). */
 export function PreferencesPage() {
-  // Editable working copy, seeded from the loaded file.
+  // Editable working copy, seeded from the loaded preferences.
   const [prefs, setPrefs] = useState<Preferences>(() =>
     structuredClone(PREFERENCES),
   );
-  // Last-persisted snapshot. Seeded from the loaded file and advanced on every
-  // successful save. We track this locally rather than diffing against the
-  // imported `PREFERENCES` because that constant is baked in at module load
-  // (eager `import.meta.glob`) and isn't reseeded after the save writes the
-  // file — diffing against it would leave the page stuck on "Unsaved changes".
+  // Last-persisted snapshot, advanced on every successful save. We track this
+  // locally and advance it on save (rather than diffing against the live
+  // `PREFERENCES` store) so `dirty` clears immediately after a save.
   const [saved, setSaved] = useState<Preferences>(() =>
     structuredClone(PREFERENCES),
   );
@@ -43,17 +39,14 @@ export function PreferencesPage() {
   async function save() {
     setState({ kind: "busy" });
     try {
-      await devMutate("/__preferences/save", { preferences: prefs });
-      // Advance the persisted snapshot so `dirty` clears immediately — the
-      // file is written, but the in-memory `PREFERENCES` constant won't reseed.
+      await savePreferences(prefs);
+      // Advance the persisted snapshot so `dirty` clears immediately.
       setSaved(structuredClone(prefs));
       setState({ kind: "saved" });
     } catch (err) {
       setState({
         kind: "error",
-        message: isDevServerMissing(err)
-          ? "Saving needs the dev server — run `npm run dev` (it writes data/preferences.json, which the static build can't do)."
-          : `Couldn't save: ${err instanceof Error ? err.message : String(err)}`,
+        message: `Couldn't save: ${err instanceof Error ? err.message : String(err)}`,
       });
     }
   }
@@ -140,7 +133,7 @@ export function PreferencesPage() {
               : "Save preferences"}
         </button>
         {state.kind === "saved" && !dirty && (
-          <span className="prefs-saved-note">✓ Saved to data/preferences.json</span>
+          <span className="prefs-saved-note">✓ Saved</span>
         )}
         {dirty && state.kind !== "busy" && (
           <span className="prefs-saved-note prefs-dirty">Unsaved changes</span>
