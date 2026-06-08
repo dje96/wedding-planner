@@ -39,9 +39,11 @@ link it to):
    placeholder data, remote URLs are fine. The first photo is the hero; the
    detail page shows the rest in a browsable lightbox gallery.
 6. **For venues, set `eventType`** — `family_stay` (multi-day rental, wedding
-   doubles as a holiday; also set `stayNights`) or `day_of` (single-day
-   celebration). For beachfront / large rental homes, default to `family_stay`
-   with `stayNights: 7` (a week) unless told otherwise.
+   doubles as a holiday; also set `stayNights`), `weekend_rental` (an Airbnb-type
+   home used as the venue for the wedding weekend only, not a full holiday —
+   defaults to 2 nights, Fri–Sun), or `day_of` (single-day celebration). For
+   beachfront / large rental homes, default to `family_stay` with `stayNights: 7`
+   (a week) unless told otherwise.
 7. **For venues, check real date availability with the browser helper**
    (`scripts/browse.mjs` — see "Browser helper" below). Don't trust a static
    fetch for this; actually operate the site's date selector:
@@ -140,7 +142,8 @@ See `src/types.ts` for the authoritative shape. Key points:
   budget rollup normalises these: `per_person` × guests, `per_night`/`per_day` ×
   `stayNights`, `per_week` × weeks. Use `per_week`/`per_night` for rental homes.
 - `eventType` / `stayNights` (venues): see step 6 above. `stayNights` drives the
-  rental cost for `family_stay` venues with a weekly/per-night rate.
+  rental cost for `family_stay` (default 7) and `weekend_rental` (default 2)
+  venues with a weekly/per-night rate.
 - `status`: `considering | shortlisted | contacted | quoted | booked | passed`.
   Default new items to `considering` unless Duncan says otherwise.
 - `attributes`: a free `{ key: value }` map for category-specific extras

@@ -17,7 +17,7 @@ import {
   formatSetting,
   formatDate,
 } from "../lib/format";
-import { estimatedCost } from "../lib/budget";
+import { estimatedCost, isMultiNight, stayNights } from "../lib/budget";
 
 type SortKey = "price" | "rating" | "name";
 
@@ -83,7 +83,7 @@ function buildRows(cat: Category, maxPrice: number): Row[] {
         render: (i) =>
           i.eventType
             ? `${EVENT_TYPE_LABELS[i.eventType]}${
-                i.eventType === "family_stay" && i.stayNights ? ` · ${i.stayNights} nights` : ""
+                isMultiNight(i) ? ` · ${stayNights(i)} nights` : ""
               }`
             : "—",
       },

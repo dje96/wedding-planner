@@ -16,6 +16,9 @@ export const GUEST_ESTIMATE = 60;
 /** Default nights assumed for a beachfront / family-stay venue when not stated. */
 export const ASSUMED_STAY_NIGHTS = 7;
 
+/** Default nights for a weekend-rental venue (Fri–Sun) when not stated. */
+export const WEEKEND_RENTAL_NIGHTS = 2;
+
 /**
  * Target wedding dates: a Saturday towards the end of August or early October
  * 2026. Venues with availability on any of these get a highlight; the window is
