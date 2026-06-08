@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import { REVIEW_ITEMS, DISMISSED, promoteCandidate, dismissCandidate } from "../data";
 import { CATEGORY_LABELS, EVENT_TYPE_LABELS, type Item } from "../types";
 import { formatPrice, formatLocation } from "../lib/format";
@@ -95,15 +96,19 @@ export function ReviewPage() {
                 className="card review-card reveal"
                 style={{ animationDelay: `${Math.min(i * 60, 480)}ms` }}
               >
-                <div className="card-photo">
+                <Link to={`/item/${item.id}`} className="card-photo">
                   {photo ? (
                     <img src={photo} alt={item.name} loading="lazy" />
                   ) : (
                     <div className="no-photo">{CATEGORY_LABELS[item.type].icon}</div>
                   )}
-                </div>
+                </Link>
                 <div className="card-body">
-                  <h3>{item.name}</h3>
+                  <h3>
+                    <Link to={`/item/${item.id}`} className="card-title-link">
+                      {item.name}
+                    </Link>
+                  </h3>
                   <div className="card-loc">
                     {CATEGORY_LABELS[item.type].singular}
                     {item.eventType ? ` · ${EVENT_TYPE_LABELS[item.eventType]}` : ""}

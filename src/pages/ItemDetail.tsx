@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 import { Link, Navigate, useParams } from "react-router-dom";
 import { CATEGORY_LABELS, EVENT_TYPE_LABELS } from "../types";
-import { getItem, linkedItems } from "../data";
+import { getItem, getReviewItem, linkedItems } from "../data";
 import {
   formatPrice,
   formatRating,
@@ -15,6 +15,7 @@ import { targetDateMatch } from "../lib/dates";
 import { StatusPill } from "../components/StatusPill";
 import { PhotoGallery } from "../components/PhotoGallery";
 import { DeleteOption } from "../components/DeleteOption";
+import { ReviewActions } from "../components/ReviewActions";
 
 const DATE_MATCH_NOTE: Record<ReturnType<typeof targetDateMatch>, ReactNode> = {
   available: <span style={{ color: "var(--sage)" }}>✓ open on a target date</span>,
@@ -34,8 +35,13 @@ function FactRow({ k, v }: { k: string; v?: ReactNode }) {
 
 export function ItemDetail() {
   const { id } = useParams<{ id: string }>();
-  const item = id ? getItem(id) : undefined;
+  // Resolve a tracked option first; fall back to a Scout candidate in the
+  // Review queue so review items open in the full detail view too.
+  const optionItem = id ? getItem(id) : undefined;
+  const reviewItem = !optionItem && id ? getReviewItem(id) : undefined;
+  const item = optionItem ?? reviewItem;
   if (!item) return <Navigate to="/" replace />;
+  const isReview = !!reviewItem;
 
   const meta = CATEGORY_LABELS[item.type];
   const pairedVenue = item.venueId ? getItem(item.venueId) : undefined;
@@ -44,8 +50,11 @@ export function ItemDetail() {
 
   return (
     <div className="reveal">
-      <Link to={item.type === "venue" ? "/" : `/category/${item.type}`} className="back-link">
-        ← {meta.plural}
+      <Link
+        to={isReview ? "/review" : item.type === "venue" ? "/" : `/category/${item.type}`}
+        className="back-link"
+      >
+        ← {isReview ? "Review" : meta.plural}
       </Link>
 
       <PhotoGallery
@@ -55,7 +64,7 @@ export function ItemDetail() {
       />
 
       <div className="page-head" style={{ marginBottom: "2rem" }}>
-        <div className="eyebrow">{meta.singular}</div>
+        <div className="eyebrow">{isReview ? `Scout candidate · ${meta.singular}` : meta.singular}</div>
         <div style={{ display: "flex", alignItems: "center", gap: "1rem", flexWrap: "wrap" }}>
           <h1 style={{ fontSize: "clamp(2rem, 4vw, 3rem)" }}>{item.name}</h1>
           <StatusPill status={item.status} />
@@ -82,6 +91,10 @@ export function ItemDetail() {
           )}
 
           {item.description && <p className="desc">{item.description}</p>}
+
+          {isReview && item.scoutNote && (
+            <div className="detail-notes">🔎 {item.scoutNote}</div>
+          )}
 
           {item.notes && <div className="detail-notes">“{item.notes}”</div>}
 
@@ -182,7 +195,7 @@ export function ItemDetail() {
             Added {formatDate(item.addedAt)}
           </p>
 
-          <DeleteOption item={item} />
+          {isReview ? <ReviewActions item={item} /> : <DeleteOption item={item} />}
         </aside>
       </div>
     </div>
