@@ -2,11 +2,13 @@ import { NavLink, Outlet } from "react-router-dom";
 import { CATEGORIES, CATEGORY_LABELS } from "./types";
 import { ALL_ITEMS, countsByCategory, REVIEW_ITEMS } from "./data";
 import { budgetStatus, leadingScenarioTotal, formatTotal } from "./lib/budget";
+import { useAuth } from "./auth";
 
 export function App() {
   const counts = countsByCategory();
   const total = leadingScenarioTotal();
   const budget = budgetStatus(total);
+  const { email, signOut } = useAuth();
 
   return (
     <div className="app">
@@ -80,6 +82,17 @@ export function App() {
             )}
           </div>
         </div>
+
+        {email && (
+          <div className="sidebar-user">
+            <span className="sidebar-user-email" title={email}>
+              {email}
+            </span>
+            <button className="btn-link sidebar-signout" onClick={() => signOut()}>
+              Sign out
+            </button>
+          </div>
+        )}
       </aside>
 
       <main className="main">

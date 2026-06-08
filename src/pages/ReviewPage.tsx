@@ -1,9 +1,8 @@
 import { useState } from "react";
-import { REVIEW_ITEMS, DISMISSED } from "../data";
+import { REVIEW_ITEMS, DISMISSED, promoteCandidate, dismissCandidate } from "../data";
 import { CATEGORY_LABELS, EVENT_TYPE_LABELS, type Item } from "../types";
 import { formatPrice, formatLocation } from "../lib/format";
 import { scoutFlags, caveatFlags, type FitLevel } from "../lib/scout";
-import { devMutate, isDevServerMissing } from "../lib/devApi";
 import { FilterBar } from "../components/FilterBar";
 import { applyFilters, EMPTY_FILTER, hasActiveFilters } from "../lib/filters";
 
@@ -16,8 +15,8 @@ type ActionState =
 
 export function ReviewPage() {
   // Optimistic local copy: removing a card on success keeps the page snappy.
-  // Writing the file also triggers Vite HMR, which reloads with fresh data.
-  const [items, setItems] = useState<Item[]>(REVIEW_ITEMS);
+  // The store (src/data.ts) is updated in step, so other pages read fresh data.
+  const [items, setItems] = useState<Item[]>(() => [...REVIEW_ITEMS]);
   const [state, setState] = useState<ActionState>({ kind: "idle" });
   const [filters, setFilters] = useState(EMPTY_FILTER);
   const filtered = applyFilters(items, filters);
@@ -25,15 +24,14 @@ export function ReviewPage() {
   async function triage(item: Item, action: "add" | "dismiss") {
     setState({ kind: "busy", id: item.id, action });
     try {
-      await devMutate(`/__review/${action}`, { id: item.id });
+      if (action === "add") await promoteCandidate(item);
+      else await dismissCandidate(item);
       setItems((prev) => prev.filter((i) => i.id !== item.id));
       setState({ kind: "idle" });
     } catch (err) {
       setState({
         kind: "error",
-        message: isDevServerMissing(err)
-          ? "Add / Dismiss needs the dev server — run `npm run dev` (the buttons write data files, which the static build can't do)."
-          : `Couldn't ${action} this candidate: ${err instanceof Error ? err.message : String(err)}`,
+        message: `Couldn't ${action} this candidate: ${err instanceof Error ? err.message : String(err)}`,
       });
     }
   }

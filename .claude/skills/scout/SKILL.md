@@ -15,8 +15,9 @@ researches each one properly** — driving the same data-retrieval methods the
 ingestion loop uses (the browser helper in `scripts/browse.mjs`) to pull **real
 pricing** (quote widgets), **real date availability** (operating the calendar
 against `TARGET_DATES`), and a **spread of photo URLs**. Each researched
-candidate is written as a file to the Review queue (`data/review/<slug>.json`)
-for Duncan to triage under the dashboard's **Review** tab.
+candidate is written as a row to the Review queue (the `items` table with
+`collection = 'review'`) for Duncan to triage under the dashboard's **Review**
+tab.
 
 Depth over breadth: a few candidates Duncan can actually decide on beat a long
 list of unknowns. The only thing deferred to **Add** is the local photo
@@ -48,10 +49,14 @@ If category or criteria are missing and can't be inferred, ask once, then run.
 
 Pull the constraints from the repo so Duncan never re-states them:
 
+The database is **Supabase** — query it with the Supabase MCP (`execute_sql`),
+not the legacy `data/*.json` files (which are now just the seed snapshot).
+
 - `src/config.ts` → `BUDGET`, `CURRENCY`, `GUEST_ESTIMATE`, `TARGET_DATES`,
   `TARGET_DATE_LABEL`, `ASSUMED_STAY_NIGHTS`.
-- `data/preferences.json` → **per-category preferences** Duncan hand-set in the
-  Preferences tab. For the category you're scouting, read its entry:
+- the `preferences` table (`select * from preferences`) → **per-category
+  preferences** Duncan hand-set in the Preferences tab. For the category you're
+  scouting, read its row:
   - `priceLimit` — a spend ceiling for *this area* (in `CURRENCY`), separate
     from the overall `BUDGET`. Rank/flag candidates against it the same way you
     do `BUDGET` (step 3) — it's the tighter, category-specific constraint when
@@ -63,16 +68,19 @@ Pull the constraints from the repo so Duncan never re-states them:
     the stored context conflict, the typed criteria win (it's the more specific,
     in-the-moment ask); otherwise combine them.
 
-  The file may be missing or have empty entries — that just means no extra steer
+  The row may be missing or have empty fields — that just means no extra steer
   for that category; fall back to `BUDGET` and the typed `[criteria]`.
-- Existing options in `data/<category>/*.json` and pending candidates in
-  `data/review/*.json` — for **de-dup** (step 4) and, if `--venue` is given, to
-  resolve the **anchor venue**.
-- `data/dismissed.json` — the **dismissed ledger**. Candidates Duncan has
-  already rejected; Scout must skip these (step 4).
+- Existing options and pending candidates in the `items` table
+  (`select id, type, collection, name, data->>'url' as url from items`) — for
+  **de-dup** (step 4) and, if `--venue` is given, to resolve the **anchor
+  venue**. `collection = 'option'` are tracked; `collection = 'review'` are
+  pending candidates.
+- the `dismissed_candidates` table — the **dismissed ledger**. Candidates Duncan
+  has already rejected; Scout must skip these (step 4).
 
 **Anchoring (non-venue categories):**
-- With `--venue <id>`: read `data/venues/<id>.json`. Inherit its `location`
+- With `--venue <id>`: read that venue's row (`select data from items where
+  id = '<id>'`). Inherit its `location`
   (region/city) as the search area and its `availability.openDates` /
   `TARGET_DATES` as the date context. Every resulting candidate carries
   `venueId: <id>`.
@@ -112,13 +120,13 @@ A funnel — cast wide, score cheap, cut hard:
 
 **Soft signals — rank, never silently exclude:**
 
-- **Budget** — compare against the category's `priceLimit` from
-  `data/preferences.json` if set, otherwise `BUDGET` (normalise per the
-  price-unit rules in CLAUDE.md: `per_person` × guests, `per_night`/`per_week` ×
-  stay). Flag over-limit; don't drop.
+- **Budget** — compare against the category's `price_limit` from the
+  `preferences` table if set, otherwise `BUDGET` (normalise per the price-unit
+  rules in CLAUDE.md: `per_person` × guests, `per_night`/`per_week` × stay).
+  Flag over-limit; don't drop.
 - **Capacity** — compare against `GUEST_ESTIMATE`. Flag too-small/unknown.
 - **Preferences** — match the free-text criteria *and* the category's stored
-  `context` from `data/preferences.json` (style, setting, vibe, must-haves).
+  `context` from the `preferences` table (style, setting, vibe, must-haves).
 - **Quality** — ratings/reviews/awards where available.
 
 Missing data at the snippet stage ranks **lower**, not **out** — step 5 fills
@@ -128,9 +136,11 @@ the gaps for the survivors.
 
 Drop any candidate that is:
 
-- already a tracked option in `data/<category>/` (match on URL, else name),
-- already pending in `data/review/` (don't double-queue a re-run), or
-- in `data/dismissed.json` — Duncan already rejected it (match on `url`, else
+- already a tracked option (`items` where `collection = 'option'`; match on URL,
+  else name),
+- already pending (`items` where `collection = 'review'`; don't double-queue a
+  re-run), or
+- in `dismissed_candidates` — Duncan already rejected it (match on `url`, else
   `name` + `category`). **Never resurface a dismissed candidate.**
 
 Keep a note of what you dropped so you can mention it (step 7).
@@ -197,8 +207,9 @@ material here in the `scoutNote` too.
 
 ### 6. Write the researched candidates into the Review queue
 
-Write each of the 3–5 as one file to `data/review/<slug>.json`, where `<slug>`
-is the kebab-case name (also the `id`). Conform to the `Item` type:
+Author each of the 3–5 as an `Item` JSON file (`<slug>.json`, where `<slug>` is
+the kebab-case name and also the `id`), then upsert it as a review row:
+`node scripts/db.mjs upsert <slug>.json --review`. Conform to the `Item` type:
 
 - **Include** everything step 5 surfaced: `id`, `type`, `name`, `url`,
   `eventType` (+ `stayNights` for `family_stay`), real `price`, `capacity`,
@@ -212,8 +223,8 @@ is the kebab-case name (also the `id`). Conform to the `Item` type:
   verified" — and `scoutedAt` = today (ISO).
 - **Omit** `status` and `addedAt` (set on Add).
 
-The dashboard hot-reloads; the candidates appear under the **Review** tab with
-their photos, prices, date flags and caveat pills already populated.
+Reload the dashboard; the candidates appear under the **Review** tab with their
+photos, prices, date flags and caveat pills already populated.
 
 ### 7. Hand off to the Review tab
 
@@ -223,10 +234,10 @@ tracked / previously dismissed: …"). Then point him to the **Review** tab:
 
 - **Add** → promotes the candidate into the tracked options (`considering`).
   Because Scout already pulled pricing, availability and photo URLs, the only
-  ingestion work left is to **download the photos locally** to
-  `public/photos/<id>/` (CLAUDE.md step 5) and rewrite `photos` to
-  `/photos/<id>/NN.jpg` — plus re-confirm anything that was still unknown.
-- **Dismiss** → logs it to `data/dismissed.json` so future scouts skip it.
+  ingestion work left is to **download the photos** to `public/photos/<id>/` and
+  upload them to Storage with `node scripts/db.mjs photos` (CLAUDE.md step 5) —
+  plus re-confirm anything that was still unknown.
+- **Dismiss** → logs it to the `dismissed_candidates` table so future scouts skip it.
 
 ## Guardrails
 
@@ -238,7 +249,7 @@ tracked / previously dismissed: …"). Then point him to the **Review** tab:
   steps 7–8 + Browser helper section) — not from guessing off a snippet.
 - **Photo URLs at scout time, local download on Add.** Scout stores remote
   `photos` URLs; it never downloads to `public/photos/` (that's Add's job).
-- **Never resurface a dismissed candidate.** Always check `data/dismissed.json`
+- **Never resurface a dismissed candidate.** Always check `dismissed_candidates`
   in step 4.
 - **Never invent data.** No fabricated prices, capacities, or dates — only what
   a quote/calendar/page actually returns. "Unknown" is an honest answer.
