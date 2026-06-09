@@ -22,20 +22,47 @@
   ],
   "eventType": "family_stay",
   "stayNights": 7,
-  "price": { "amount": 14534, "currency": "USD", "unit": "per_week", "note": "All-in for Oct 4–11, 2026 (Sun–Sun week covering the Oct 10 target): $12,729 rent + $175 admin + $1,629 tax = $14,534. Peak late-Aug is far higher — Aug 23–30 (covers Aug 29): $19,796 rent, $22,492 all-in. Strongly seasonal; pulled 2026-06-06 from the site's booking-engine quote." },
-  "capacity": { "max": 60, "seated": 60 },
-  "location": { "address": "Pine Island, Corolla", "city": "Corolla", "region": "Outer Banks, NC", "setting": "both" },
-  "availability": { "openDates": ["2026-08-29", "2026-10-03", "2026-10-10"], "notes": "Checked 2026-06-06 via the site's availability calendar. Of the target Saturdays, Aug 29, Oct 3 and Oct 10 are open (October 2026 is wide open); Aug 22 is booked. Rentals run Sunday-to-Sunday (Sunday turn day), so a Saturday wedding means booking the Sun–Sun week around it (e.g. Oct 4–11 for Oct 10, Aug 23–30 for Aug 29)." },
-  "rating": { "score": 5, "count": 1, "source": "Atlantic Realty" },
-  "contact": { "name": "Atlantic Realty of the Outer Banks", "website": "https://www.atlanticrealty-nc.com/outer-banks/owens" },
+  "price": {
+    "amount": 14534,
+    "currency": "USD",
+    "unit": "per_week",
+    "note": "All-in for Oct 4–11, 2026 (Sun–Sun week covering the Oct 10 target): $12,729 rent + $175 admin + $1,629 tax = $14,534. Peak late-Aug is far higher — Aug 23–30 (covers Aug 29): $19,796 rent, $22,492 all-in. Strongly seasonal; pulled 2026-06-06 from the site's booking-engine quote."
+  },
+  "capacity": {
+    "max": 60,
+    "seated": 60
+  },
+  "location": {
+    "address": "Pine Island, Corolla",
+    "city": "Corolla",
+    "region": "Outer Banks, NC",
+    "setting": "both"
+  },
+  "availability": {
+    "openDates": [
+      "2026-08-29",
+      "2026-10-03",
+      "2026-10-10"
+    ],
+    "notes": "Checked 2026-06-06 via the site's availability calendar. Of the target Saturdays, Aug 29, Oct 3 and Oct 10 are open (October 2026 is wide open); Aug 22 is booked. Rentals run Sunday-to-Sunday (Sunday turn day), so a Saturday wedding means booking the Sun–Sun week around it (e.g. Oct 4–11 for Oct 10, Aug 23–30 for Aug 29)."
+  },
+  "rating": {
+    "score": 5,
+    "count": 1,
+    "source": "Atlantic Realty"
+  },
+  "contact": {
+    "name": "Atlantic Realty of the Outer Banks",
+    "website": "https://www.atlanticrealty-nc.com/outer-banks/owens"
+  },
   "status": "considering",
   "notes": "Dedicated wedding/event home — event capacity 60. Preferred planning partner is 11th Hour Weddings & Events (could add as a linked supplier). Pricing is weekly and seasonal; need to request a quote. No on-site price listed.",
-  "tags": ["oceanfront", "event-home", "gated-community", "outer-banks", "large-party"],
-  "attributes": {
-    "bedrooms": "12 (all with private bath)",
-    "eventCapacity": "60 guests",
-    "amenities": "Elevator, hot tub, theater room, game room, fitness room",
-    "weddingsAllowed": "Yes — purpose-built event home"
-  },
+  "tags": [
+    "oceanfront",
+    "event-home",
+    "gated-community",
+    "outer-banks",
+    "large-party"
+  ],
   "addedAt": "2026-06-06"
 }

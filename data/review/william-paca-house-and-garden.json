@@ -24,8 +24,17 @@
     "unit": "total",
     "note": "$7,000-8,500 per event for a full wedding (varies by day of week — a Saturday lands at the top of the range, slightly over the $7,000 venue limit). Includes 5-hour access for ceremony + cocktails + reception + dancing, exclusive garden use, tented terraces with lighting, tables and chairs, private dressing area, on-site catering kitchen, and a 1-year Historic Annapolis membership. A Tue-Thu ceremony-only rental is $3,000 (2 hrs, up to 40 guests). Pulled 2026-06-07 from herecomestheguide.com + annapolis.org; reviewers note 'no hidden fees, no unexpected rules.'"
   },
-  "capacity": { "max": 120, "seated": 120, "standing": 150 },
-  "location": { "address": "186 Prince George St, Annapolis, MD 21401", "city": "Annapolis", "region": "Annapolis, MD", "setting": "outdoor" },
+  "capacity": {
+    "max": 120,
+    "seated": 120,
+    "standing": 150
+  },
+  "location": {
+    "address": "186 Prince George St, Annapolis, MD 21401",
+    "city": "Annapolis",
+    "region": "Annapolis, MD",
+    "setting": "outdoor"
+  },
   "availability": {
     "notes": "Events run April-October, so both target windows (late-Aug and early-Oct 2026 Saturdays) are in season. There is no public availability calendar for this venue — specific 2026 Saturday availability must be confirmed by inquiry. Events are typically scheduled 4:00-9:00pm."
   },
@@ -35,18 +44,26 @@
     "email": "weddings@annapolis.org",
     "website": "https://www.annapolis.org/support/venue-rental/"
   },
-  "tags": ["garden", "historic", "downtown-annapolis", "outdoor-ceremony", "tented-terrace", "classic", "timeless"],
-  "attributes": {
-    "cateringPolicy": "Open — bring your own caterer allowed (preferred list available; a $1,000 fee applies to choose a caterer NOT on the list). On-site catering kitchen.",
-    "ceremonySpaces": "Outdoor garden — by the Summerhouse, Chippendale bridge or pond; reception on tented terraces",
-    "included": "Tented terraces with lighting, tables and chairs, private dressing area, 1-year Historic Annapolis membership",
-    "season": "April-October",
-    "alcohol": "Bring-your-own or in-house bar options",
-    "music": "Some amplified-music restrictions apply"
-  },
+  "tags": [
+    "garden",
+    "historic",
+    "downtown-annapolis",
+    "outdoor-ceremony",
+    "tented-terrace",
+    "classic",
+    "timeless"
+  ],
   "flags": [
-    { "level": "warn", "label": "Over $7k venue limit", "detail": "A Saturday lands near $8,500 — above the $7,000 per-area venue price limit (still well within the $30k overall budget)." },
-    { "level": "unknown", "label": "Off-list caterer fee", "detail": "Outside caterers are allowed, but a $1,000 fee applies for a caterer not on the preferred list." }
+    {
+      "level": "warn",
+      "label": "Over $7k venue limit",
+      "detail": "A Saturday lands near $8,500 — above the $7,000 per-area venue price limit (still well within the $30k overall budget)."
+    },
+    {
+      "level": "unknown",
+      "label": "Off-list caterer fee",
+      "detail": "Outside caterers are allowed, but a $1,000 fee applies for a caterer not on the preferred list."
+    }
   ],
   "scoutNote": "Best match to the brief's 'classy and timeless garden' — a restored 18th-century formal garden in downtown Annapolis, fully outdoor ceremony + tented-terrace reception (not a house interior or church). Meets the open-vendor must-have: outside caterers are allowed (preferred list, $1,000 off-list fee). Capacity 120 seated comfortably fits ~60. VERIFIED: pricing, capacity, catering policy, season, contact. UNKNOWN: exact 2026 Saturday availability (no public calendar — inquire). FLAG: a Saturday lands near $8,500, just over the $7,000 venue price limit.",
   "scoutedAt": "2026-06-07"

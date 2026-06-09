@@ -32,25 +32,68 @@
     "unit": "per_week",
     "note": "Whole-home weekly rental. Quoted via Airbnb for the wedding week Sep 27–Oct 4, 2026 (covers the target Sat Oct 3): $19,267 for 7 nights less a $1,768 weekly discount = $17,499 before taxes. SC/Beaufort County lodging taxes (~12–13%) are added at checkout. Strongly seasonal — see the seasonal quotes. Pulled 2026-06-07 from Airbnb's booking widget."
   },
-  "location": { "address": "9 Juniper Lane, South Forest Beach", "city": "Hilton Head Island", "region": "South Carolina", "setting": "both" },
+  "location": {
+    "address": "9 Juniper Lane, South Forest Beach",
+    "city": "Hilton Head Island",
+    "region": "South Carolina",
+    "setting": "both"
+  },
   "availability": {
-    "openDates": ["2026-10-03"],
+    "openDates": [
+      "2026-10-03"
+    ],
     "notes": "Checked 2026-06-07 via Airbnb's availability calendar. Of the target Saturdays, only Oct 3 is open — Aug 22, Aug 29 and Oct 10 fall inside booked weeks. The open early-October run (Oct 1–7) is bookable as the 7-night week Sep 27–Oct 4 (a 7-night minimum applies; the Oct 1–8 framing is rejected as a turnover conflict). October fills fast — mid/late-Oct (from Oct 19) is otherwise wide open."
   },
   "venue": {
-    "vendorPolicy": { "catering": "open", "photography": "open", "other": "open" },
-    "alcohol": { "byoAllowed": true, "note": "Private whole-home rental — you supply and serve your own bar." },
-    "music": { "note": "Curfew not published. South Forest Beach is residential and the Town of Hilton Head has a noise ordinance — confirm amplified-sound rules / cutoff with the host before booking." },
+    "vendorPolicy": {
+      "catering": "open",
+      "photography": "open",
+      "other": "open"
+    },
+    "alcohol": {
+      "byoAllowed": true,
+      "note": "Private whole-home rental — you supply and serve your own bar."
+    },
+    "music": {
+      "note": "Curfew not published. South Forest Beach is residential and the Town of Hilton Head has a noise ordinance — confirm amplified-sound rules / cutoff with the host before booking."
+    },
     "priceIncludes": {
-      "tables": { "status": "no", "note": "No event tables — rent separately for the reception." },
-      "chairs": { "status": "no", "note": "No event/ceremony chairs — rent separately." },
-      "lighting": { "status": "no", "note": "Event lighting not provided." },
-      "tent": { "status": "no", "note": "No tent — arrange your own cover for the backyard reception." },
-      "coordinator": { "status": "no", "note": "No on-site event coordinator." },
-      "parking": { "status": "included", "note": "Free parking on premises." },
-      "restrooms": { "status": "included", "note": "7.5 in-home bathrooms." },
-      "dressingSuite": { "status": "included", "note": "8 en-suite bedrooms incl. a primary suite — ample getting-ready space." },
-      "heatingAc": { "status": "included", "note": "Central air conditioning and heating." }
+      "tables": {
+        "status": "no",
+        "note": "No event tables — rent separately for the reception."
+      },
+      "chairs": {
+        "status": "no",
+        "note": "No event/ceremony chairs — rent separately."
+      },
+      "lighting": {
+        "status": "no",
+        "note": "Event lighting not provided."
+      },
+      "tent": {
+        "status": "no",
+        "note": "No tent — arrange your own cover for the backyard reception."
+      },
+      "coordinator": {
+        "status": "no",
+        "note": "No on-site event coordinator."
+      },
+      "parking": {
+        "status": "included",
+        "note": "Free parking on premises."
+      },
+      "restrooms": {
+        "status": "included",
+        "note": "7.5 in-home bathrooms."
+      },
+      "dressingSuite": {
+        "status": "included",
+        "note": "8 en-suite bedrooms incl. a primary suite — ample getting-ready space."
+      },
+      "heatingAc": {
+        "status": "included",
+        "note": "Central air conditioning and heating."
+      }
     },
     "spaces": {
       "ceremonyOnSite": true,
@@ -59,30 +102,54 @@
       "notes": "Oceanfront ceremony on the beach via the private boardwalk; reception on the grassy backyard / stone deck by the heated pool. Three ocean-view decks and a firepit for gathering."
     },
     "quotes": [
-      { "window": "wedding week (covers Sat Oct 3)", "dates": "2026-09-27 – 2026-10-04", "rent": 19267, "fees": -1768, "total": 17499 },
-      { "window": "mid-Oct", "dates": "2026-10-19 – 2026-10-26", "rent": 18749, "fees": -1716, "total": 17033 }
+      {
+        "window": "wedding week (covers Sat Oct 3)",
+        "dates": "2026-09-27 – 2026-10-04",
+        "rent": 19267,
+        "fees": -1768,
+        "total": 17499
+      },
+      {
+        "window": "mid-Oct",
+        "dates": "2026-10-19 – 2026-10-26",
+        "rent": 18749,
+        "fees": -1716,
+        "total": 17033
+      }
     ]
   },
-  "contact": { "name": "Host And Home (Superhost)", "website": "https://www.airbnb.com/rooms/1158199224864248069" },
+  "contact": {
+    "name": "Host And Home (Superhost)",
+    "website": "https://www.airbnb.com/rooms/1158199224864248069"
+  },
   "status": "considering",
   "notes": "Airbnb whole-home rental on South Forest Beach. Strong fit for the beachfront-house option: private beach access for the ceremony + backyard for the reception, open on the target Sat Oct 3. Two open questions before it's a real contender — (1) whether the host permits a 40–60-guest wedding event (the listing markets overnight stays for up to 19, but the host's own embedded \"Booked events\" calendar is full of weddings, so events look welcomed) and any event fee/cap; (2) week rate (~$17.5k) is well over the $7k venue price-limit, though under the overall $30k budget. Bedrooms: 8 en-suite + a 2-BR guest house = 10.",
-  "tags": ["oceanfront", "beachfront", "event-home", "hilton-head", "south-carolina", "large-party", "airbnb", "guest-house"],
-  "attributes": {
-    "bedrooms": "8 en-suite + 2-bedroom guest house (10 total)",
-    "beds": "14",
-    "baths": "7.5",
-    "sleeps": "Up to 19 overnight",
-    "squareFeet": "5,226",
-    "amenities": "Heated pool (26'x14') & spa, hot tub, 3 ocean-view decks, firepit, chef's kitchen w/ double ovens, 11 smart TVs, guest house, washer/dryer, private boardwalk beach access",
-    "checkIn": "After 4:00 PM",
-    "checkout": "Before 10:00 AM",
-    "pets": "No pets",
-    "rating": "5.0 (6 reviews), Guest Favorite, Superhost"
-  },
+  "tags": [
+    "oceanfront",
+    "beachfront",
+    "event-home",
+    "hilton-head",
+    "south-carolina",
+    "large-party",
+    "airbnb",
+    "guest-house"
+  ],
   "flags": [
-    { "level": "warn", "label": "Over venue price limit", "detail": "~$17,500/week before taxes is well above the $7,000 venue price-limit in Preferences (still under the overall $30,000 budget). Whole-week rental cost." },
-    { "level": "unknown", "label": "Large-event permission & cap unconfirmed", "detail": "Airbnb listing markets overnight stays (sleeps up to 19); it doesn't state whether a 40–60-guest wedding event is permitted, the max event headcount, or any event fee. The host's embedded \"Booked events\" calendar shows recurring weddings, so events appear welcomed — confirm directly with the host." },
-    { "level": "unknown", "label": "Noise/music rules unconfirmed", "detail": "Residential South Forest Beach with a Town of Hilton Head noise ordinance — confirm amplified-sound cutoff with the host." }
+    {
+      "level": "warn",
+      "label": "Over venue price limit",
+      "detail": "~$17,500/week before taxes is well above the $7,000 venue price-limit in Preferences (still under the overall $30,000 budget). Whole-week rental cost."
+    },
+    {
+      "level": "unknown",
+      "label": "Large-event permission & cap unconfirmed",
+      "detail": "Airbnb listing markets overnight stays (sleeps up to 19); it doesn't state whether a 40–60-guest wedding event is permitted, the max event headcount, or any event fee. The host's embedded \"Booked events\" calendar shows recurring weddings, so events appear welcomed — confirm directly with the host."
+    },
+    {
+      "level": "unknown",
+      "label": "Noise/music rules unconfirmed",
+      "detail": "Residential South Forest Beach with a Town of Hilton Head noise ordinance — confirm amplified-sound cutoff with the host."
+    }
   ],
   "addedAt": "2026-06-07"
 }
