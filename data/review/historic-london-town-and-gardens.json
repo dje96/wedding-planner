@@ -19,22 +19,38 @@
     "unit": "total",
     "note": "Pricing is not published — by inquiry only. Standard rentals run mid-April through November (tent included in season); off-season is hourly. Request a quote. Checked 2026-06-07 — no figure on the site."
   },
-  "capacity": { "max": 200, "seated": 200, "standing": 240 },
-  "location": { "address": "839 Londontown Rd, Edgewater, MD 21037", "city": "Edgewater", "region": "Edgewater (near Annapolis), MD", "setting": "outdoor" },
+  "capacity": {
+    "max": 200,
+    "seated": 200,
+    "standing": 240
+  },
+  "location": {
+    "address": "839 Londontown Rd, Edgewater, MD 21037",
+    "city": "Edgewater",
+    "region": "Edgewater (near Annapolis), MD",
+    "setting": "outdoor"
+  },
   "availability": {
     "notes": "Wedding season mid-April through November, so both target windows (late-Aug / early-Oct 2026 Saturdays) are in season. No public availability calendar — confirm specific Saturday availability by inquiry."
   },
-  "contact": { "website": "https://www.londontownweddings.com/contact" },
-  "tags": ["garden", "waterfront", "historic", "near-annapolis", "south-river", "outdoor-ceremony", "tented-pavilion"],
-  "attributes": {
-    "cateringPolicy": "Approved caterer list — couples MUST choose from ~10 vetted caterers; fully open outside catering is not permitted.",
-    "ceremonySpaces": "Two garden ceremony lawns, 10 acres of gardens, waterfront grounds + 185ft pier on the South River; tented pavilion reception",
-    "included": "Tent (mid-Apr-Nov), pavilion with dressing suites, Camellia bridal suite, six restrooms, ~125 parking spaces, 3-hr setup + 1-hr cleanup, ceremony rehearsal",
-    "season": "Mid-April through November",
-    "restrictions": "Enclosed candles only (no sparklers/wish lanterns); professional installation for tent/pavilion decor; no wall-damaging adhesives; pets allowed"
+  "contact": {
+    "website": "https://www.londontownweddings.com/contact"
   },
+  "tags": [
+    "garden",
+    "waterfront",
+    "historic",
+    "near-annapolis",
+    "south-river",
+    "outdoor-ceremony",
+    "tented-pavilion"
+  ],
   "flags": [
-    { "level": "warn", "label": "Approved caterer list required", "detail": "Couples must choose from ~10 vetted caterers — conflicts with your no-required-vendor preference; fully open outside catering isn't permitted." }
+    {
+      "level": "warn",
+      "label": "Approved caterer list required",
+      "detail": "Couples must choose from ~10 vetted caterers — conflicts with your no-required-vendor preference; fully open outside catering isn't permitted."
+    }
   ],
   "scoutNote": "The most spectacular pure-garden + waterfront setting of the shortlist — 23 acres of gardens on the South River, classic and timeless, fully outdoor, with the tent included in season. Capacity (up to 200) easily holds ~60. FLAG against the must-have: this venue REQUIRES choosing a caterer from its ~10-caterer approved list — it does not allow a fully free choice of food vendor, so it's the weakest fit on the 'no required vendors' rule (kept on the list because the garden match is so strong — your call). UNKNOWN: price (by inquiry, not published) and specific 2026 Saturday availability.",
   "scoutedAt": "2026-06-07"

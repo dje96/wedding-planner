@@ -165,9 +165,33 @@ See `src/types.ts` for the authoritative shape. Key points:
   venues with a weekly/per-night rate.
 - `status`: `considering | shortlisted | contacted | quoted | booked | passed`.
   Default new items to `considering` unless Duncan says otherwise.
-- `attributes`: a free `{ key: value }` map for category-specific extras
-  (photographer hours, corkage, accommodation, etc.). camelCase keys render
-  nicely (e.g. `secondShooter` → "Second Shooter").
+- **Category-specific detail** lives in three explicit lists (replacing the old
+  `attributes` map), each answering one question the detail page always asks —
+  every section renders (the inclusions checklist always shows the full standard
+  set; add-ons/restrictions show "None recorded yet" when empty), so a gap stays
+  visible rather than hidden:
+  - `inclusions`: what the price covers, as a **standardized three-state
+    checklist** — `{ key, state, note?, label? }`. `state` is `"yes"` (✓ covered),
+    `"unknown"` (? not confirmed) or `"no"` (✗ explicitly excluded, e.g. catering
+    you must arrange). The detail page renders the **full per-category checklist**
+    (`INCLUSION_DEFS` in `src/lib/core.tsx` — e.g. for venues: tables & chairs,
+    linens, catering, bar, coordinator, lighting, sound, restrooms, parking,
+    dressing suite, tent, setup) for **every** item; an item that doesn't record a
+    standard `key` shows it as `?`, so a gap is always visible. Use a standard
+    `key` (label comes from the registry — keeps wording identical across venues);
+    put the venue-specific qualifier in `note` ("basic", "seats 200", "white
+    resin"). A highlight that isn't in the standard set (e.g. a private island,
+    beach access) is an **extra**: a custom `key` plus its own `label`, rendered
+    after the standard rows. e.g. `{ "key": "tables_chairs", "state": "yes",
+    "note": "seats 200" }`, `{ "key": "catering", "state": "no", "note":
+    "approved-list, billed separately" }`, `{ "key": "beach_access", "state":
+    "yes", "label": "Private boardwalk beach access" }`.
+  - `addOns`: optional paid extras — `{ label, price?, note? }`. `price` reuses
+    the `Price` shape (`unit` lets you say per_hour / per_person / total). Add-on
+    prices are **not** rolled into the budget (they're conditional). e.g.
+    `{ "label": "Off-list caterer", "price": { "amount": 1000, "unit": "total" } }`.
+  - `restrictions`: rules & limits — `{ label, note? }`. e.g.
+    `{ "label": "Amplified music", "note": "Must end by 11pm" }`.
 - `flags`: an array of `{ level, label, detail? }` caveats — `level` is
   `"unknown"` (an amber gap to confirm, e.g. catering policy not published) or
   `"warn"` (a red notice that conflicts with a preference, e.g. an
@@ -263,7 +287,13 @@ static build too. You can perform the same moves directly in Supabase if needed.
   seed snapshot only — the app no longer reads them.
 - `src/types.ts` — the data model. `src/config.ts` — hand-set settings.
   `src/lib/` — formatting, budget/stay rollups (`budget.ts`), date matching
-  (`dates.ts`), Scout fit flags (`scout.ts`).
+  (`dates.ts`), Scout fit flags (`scout.ts`), and the per-category core registry
+  (`core.tsx`). `core.tsx` owns `CORE_KEYS` (the ordered set of always-shown core
+  facts per category) and resolves each core key from a typed struct (price,
+  capacity, rating…); the `ItemDetail` core table and the `ComparePage` rows are
+  both driven by it, so the core stays consistent across the factsheet and the
+  comparison. The category-specific `inclusions` / `addOns` / `restrictions` lists
+  render as the three always-shown detail sections on the detail page.
 - Pages: `Overview` (venue dossiers, stat band, budget bar + target dates),
   `CategoryPage` (card grid), `ComparePage` (spec-sheet table with "best"
   flags), `ReviewPage` (Scout candidate triage — see below), `PreferencesPage`

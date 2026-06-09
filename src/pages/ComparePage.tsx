@@ -3,21 +3,13 @@ import { Link, useSearchParams } from "react-router-dom";
 import {
   CATEGORIES,
   CATEGORY_LABELS,
-  EVENT_TYPE_LABELS,
-  STATUS_LABELS,
   type Category,
   type Item,
 } from "../types";
 import { itemsByCategory, getItem } from "../data";
-import {
-  formatPrice,
-  formatRating,
-  formatCapacity,
-  formatLocation,
-  formatSetting,
-  formatDate,
-} from "../lib/format";
-import { estimatedCost, isMultiNight, stayNights } from "../lib/budget";
+import { formatPrice, formatRating, formatCapacity } from "../lib/format";
+import { estimatedCost } from "../lib/budget";
+import { CORE_KEYS, coreField, coreLabel } from "../lib/core";
 
 type SortKey = "price" | "rating" | "name";
 
@@ -29,82 +21,80 @@ interface Row {
   render: (item: Item) => ReactNode;
 }
 
-function buildRows(cat: Category, maxPrice: number): Row[] {
-  const rows: Row[] = [
-    {
-      label: cat === "venue" ? "Est. cost" : "Price",
-      best: "min",
-      value: (i) => (i.price?.amount != null ? estimatedCost(i) : null),
-      render: (i) => (
-        <div>
-          <span className="cell-num">{formatPrice(i.price)}</span>
-          {i.price?.amount != null && maxPrice > 0 && (
-            <div className="pbar">
-              <span style={{ width: `${(estimatedCost(i) / maxPrice) * 100}%` }} />
-            </div>
-          )}
-          {i.price?.note && (
-            <div className="faint" style={{ fontSize: "0.74rem", marginTop: "0.3rem" }}>
-              {i.price.note}
-            </div>
-          )}
-        </div>
-      ),
-    },
-    {
-      label: "Rating",
-      best: "max",
-      value: (i) => i.rating?.score ?? null,
-      render: (i) => <span className="cell-num">{formatRating(i)}</span>,
-    },
-    {
-      label: "Status",
-      value: () => null,
-      render: (i) => (i.status ? STATUS_LABELS[i.status] : "—"),
-    },
-    {
-      label: "Location",
-      value: () => null,
-      render: (i) => formatLocation(i),
-    },
-  ];
+// Core keys that get rich Compare rendering (numeric "best" highlight + a price
+// bar). Every other core key falls through to the shared `coreField` resolver,
+// so the table shows the same per-category core as the detail factsheet.
+function richRow(key: string, maxPrice: number): Row | null {
+  switch (key) {
+    case "price":
+      return {
+        label: coreLabel(key),
+        best: "min",
+        value: (i) => (i.price?.amount != null ? estimatedCost(i) : null),
+        render: (i) => (
+          <div>
+            <span className="cell-num">{formatPrice(i.price)}</span>
+            {i.price?.amount != null && maxPrice > 0 && (
+              <div className="pbar">
+                <span style={{ width: `${(estimatedCost(i) / maxPrice) * 100}%` }} />
+              </div>
+            )}
+            {i.price?.note && (
+              <div className="faint" style={{ fontSize: "0.74rem", marginTop: "0.3rem" }}>
+                {i.price.note}
+              </div>
+            )}
+          </div>
+        ),
+      };
+    case "rating":
+      return {
+        label: coreLabel(key),
+        best: "max",
+        value: (i) => i.rating?.score ?? null,
+        render: (i) => <span className="cell-num">{formatRating(i)}</span>,
+      };
+    case "capacity":
+      return {
+        label: coreLabel(key),
+        best: "max",
+        value: (i) => i.capacity?.max ?? i.capacity?.seated ?? null,
+        render: (i) => <span className="cell-num">{formatCapacity(i)}</span>,
+      };
+    default:
+      return null;
+  }
+}
 
-  if (cat === "venue") {
-    rows.splice(2, 0, {
-      label: "Capacity",
-      best: "max",
-      value: (i) => i.capacity?.max ?? i.capacity?.seated ?? null,
-      render: (i) => <span className="cell-num">{formatCapacity(i)}</span>,
-    });
-    rows.push(
-      {
-        label: "Event type",
-        value: () => null,
-        render: (i) =>
-          i.eventType
-            ? `${EVENT_TYPE_LABELS[i.eventType]}${
-                isMultiNight(i) ? ` · ${stayNights(i)} nights` : ""
-              }`
-            : "—",
+function buildRows(cat: Category, maxPrice: number): Row[] {
+  const rows: Row[] = CORE_KEYS[cat].map((key) => {
+    const rich = richRow(key, maxPrice);
+    if (rich) return rich;
+    return {
+      label: coreLabel(key),
+      value: () => null,
+      render: (i) => {
+        const f = coreField(i, key);
+        return f.known ? f.node : <span className="faint">—</span>;
       },
-      {
-        label: "Setting",
-        value: () => null,
-        render: (i) => formatSetting(i),
-      },
-      {
-        label: "Next open date",
-        value: () => null,
-        render: (i) => formatDate(i.availability?.openDates?.[0]),
-      }
-    );
-  } else {
+    };
+  });
+
+  // Suppliers: which venue they're paired with isn't a core fact, but it's the
+  // key relationship — append it.
+  if (cat !== "venue") {
     rows.push({
       label: "Paired venue",
       value: () => null,
       render: (i) => {
         const v = i.venueId ? getItem(i.venueId) : undefined;
-        return v ? <Link to={`/item/${v.id}`} className="btn-link">{v.name}</Link> : "Unassigned";
+        return v ? (
+          <Link to={`/item/${v.id}`} className="btn-link">
+            {v.name}
+          </Link>
+        ) : (
+          "Unassigned"
+        );
       },
     });
   }

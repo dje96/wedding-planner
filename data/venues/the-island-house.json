@@ -21,19 +21,44 @@
     "unit": "total",
     "note": "Saturday venue rental, seasonal. Peak (Mar–Jun, Sep–Nov — incl. the early-Oct target) Saturday $9,000; Regular (Jul–Aug — incl. the late-Aug target — and Dec–Feb) Saturday $8,000. Fri/Sun run ~$1,000 less; Mon–Thu are $5,500–$6,000. Headline shows the peak Saturday rate. Pulled 2026-06-07 from the site."
   },
-  "location": { "address": "2658 Swygert Boulevard", "city": "Johns Island", "region": "Charleston, SC", "setting": "outdoor" },
+  "location": {
+    "address": "2658 Swygert Boulevard",
+    "city": "Johns Island",
+    "region": "Charleston, SC",
+    "setting": "outdoor"
+  },
   "availability": {
-    "openDates": ["2026-08-01"],
+    "openDates": [
+      "2026-08-01"
+    ],
     "notes": "Checked 2026-06-07 via the venue's public Google 'Booked events' calendar (an entry = booked; empty = open). All four target Saturdays are already booked: Aug 22, Aug 29, Oct 3 and Oct 10 each show a wedding. Of nearby Saturdays only Aug 1 2026 was open; weekdays in the target months are largely free. The venue books most weekends well in advance."
   },
   "venue": {
     "priceIncludes": {
-      "tent": { "status": "included", "note": "Permanent 40' x 80' tent with a smooth concrete floor" },
-      "lighting": { "status": "included", "note": "3 wrought-iron chandeliers, ceiling fans & perimeter lighting under the tent" },
-      "tables": { "status": "included", "note": "10× 60\" round tables + 5 tall cocktail tables, set to your layout" },
-      "chairs": { "status": "included", "note": "125 white resin padded chairs, set up (typically reused ceremony → reception)" },
-      "dressingSuite": { "status": "included", "note": "The on-site house for the bride/wedding party to get ready" },
-      "setupCleanup": { "status": "included", "note": "Staff set up the tables & chairs to your layout" }
+      "tent": {
+        "status": "included",
+        "note": "Permanent 40' x 80' tent with a smooth concrete floor"
+      },
+      "lighting": {
+        "status": "included",
+        "note": "3 wrought-iron chandeliers, ceiling fans & perimeter lighting under the tent"
+      },
+      "tables": {
+        "status": "included",
+        "note": "10× 60\" round tables + 5 tall cocktail tables, set to your layout"
+      },
+      "chairs": {
+        "status": "included",
+        "note": "125 white resin padded chairs, set up (typically reused ceremony → reception)"
+      },
+      "dressingSuite": {
+        "status": "included",
+        "note": "The on-site house for the bride/wedding party to get ready"
+      },
+      "setupCleanup": {
+        "status": "included",
+        "note": "Staff set up the tables & chairs to your layout"
+      }
     },
     "spaces": {
       "ceremonyOnSite": true,
@@ -42,22 +67,34 @@
       "notes": "Entirely outdoor — waterfront ceremony on the Stono River, reception under the 40' x 80' tent."
     },
     "quotes": [
-      { "window": "early-Oct (peak season)", "dates": "Saturday, Oct 2026", "total": 9000 },
-      { "window": "late-Aug (regular season)", "dates": "Saturday, Aug 2026", "total": 8000 }
+      {
+        "window": "early-Oct (peak season)",
+        "dates": "Saturday, Oct 2026",
+        "total": 9000
+      },
+      {
+        "window": "late-Aug (regular season)",
+        "dates": "Saturday, Aug 2026",
+        "total": 8000
+      }
     ]
   },
-  "contact": { "phone": "843.647.4362", "email": "info@islandhouseevents.com", "website": "https://www.islandhouseevents.com/" },
+  "contact": {
+    "phone": "843.647.4362",
+    "email": "info@islandhouseevents.com",
+    "website": "https://www.islandhouseevents.com/"
+  },
   "status": "considering",
   "notes": "Outdoor waterfront day-of venue near Charleston — fits the 'classy & timeless, outdoor' Option 2 brief, though it's a riverfront marsh setting rather than a manicured garden. The day-rate covers a strong amount of rentals (tent, lighting, 10 tables, 125 chairs, dressing house, setup). Big caveats: every target Saturday is already booked, the Saturday rate is above the $7,000 venue limit (weekdays would fit), and the site doesn't publish its vendor/catering policy — confirm there's no required-vendor list before going further.",
-  "tags": ["waterfront", "charleston", "lowcountry", "private-island", "tented", "day-of", "outdoor"],
-  "attributes": {
-    "acreage": "55-acre private island on the Stono River",
-    "eventHours": "5 hours for ceremony/reception; vendor access from 10am",
-    "includedChairs": "125 white resin padded chairs",
-    "nearbyCity": "~20 min from downtown Charleston",
-    "established": "Family-owned since 2008; 700+ weddings hosted",
-    "virtualTour": "Available (YouTube)"
-  },
+  "tags": [
+    "waterfront",
+    "charleston",
+    "lowcountry",
+    "private-island",
+    "tented",
+    "day-of",
+    "outdoor"
+  ],
   "flags": [
     {
       "level": "warn",

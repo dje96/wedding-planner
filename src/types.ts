@@ -136,6 +136,70 @@ export interface ItemFlag {
   detail?: string;
 }
 
+// ---------------------------------------------------------------------------
+// Category-specific detail — the three questions every option has to answer:
+//   1. What's included in the price?        → `inclusions`
+//   2. What optional add-ons, at what cost? → `addOns`
+//   3. What are the restrictions?           → `restrictions`
+// Each is its own list with a purpose-built shape (replacing the old free-text
+// `attributes` map). The detail page renders all three sections for every item,
+// even when empty — an empty section reads as "not recorded yet", so a gap is
+// visible rather than hidden.
+// ---------------------------------------------------------------------------
+
+/**
+ * Whether the price covers a given thing:
+ * - `yes`     → covered (green ✓)
+ * - `unknown` → not confirmed either way (grey ?) — the default for any standard
+ *   checklist item we haven't recorded, so a gap is visible rather than implied.
+ * - `no`      → explicitly NOT covered (red ✗), e.g. catering you must arrange.
+ */
+export type InclusionState = "yes" | "unknown" | "no";
+
+/**
+ * One line of the "what's included" checklist. Two flavours:
+ * - **Standard** — `key` matches an entry in the per-category checklist
+ *   (`INCLUSION_DEFS` in `src/lib/core.tsx`); the label comes from there, so
+ *   "Tables & chairs" is worded identically across every venue. The full
+ *   standard checklist always renders; an unrecorded item shows as `unknown`.
+ * - **Extra** — a venue-specific highlight not in the standard list (e.g.
+ *   "Private beach access"); `key` is a custom slug and `label` carries the
+ *   wording. These render after the standard rows.
+ * The venue-specific qualifier ("basic", "seats 200", "white resin") lives in
+ * `note`, keeping the label standardized.
+ */
+export interface Inclusion {
+  /** Canonical checklist key, or a custom slug for a venue-specific extra. */
+  key: string;
+  /** Whether the price covers it: yes ✓ / unknown ? / no ✗. */
+  state: InclusionState;
+  /** Display label for an extra (custom key). Standard keys take their label
+   *  from the registry and ignore this. */
+  label?: string;
+  /** Venue-specific qualifier, e.g. "basic", "seats 200", "white resin". */
+  note?: string;
+}
+
+/** An optional paid extra and its cost. Add-on prices are NOT rolled into the
+ *  budget — they're conditional on choosing the extra. */
+export interface AddOn {
+  /** What it is, e.g. "Marquee", "Extra hour of coverage". */
+  label: string;
+  /** The cost of the add-on (reuses the shared `Price` shape; `unit` lets you
+   *  say per_hour / per_person / total etc.). */
+  price?: Price;
+  /** Optional qualifier, e.g. "if outside the included 8 hours". */
+  note?: string;
+}
+
+/** A venue/supplier rule or limitation. */
+export interface Restriction {
+  /** The subject of the rule, e.g. "Amplified music", "Catering". */
+  label: string;
+  /** The rule itself, e.g. "Must end by 11pm", "Approved vendor list only". */
+  note?: string;
+}
+
 export interface Item {
   /** Stable slug, matches the filename. e.g. "the-oak-barn". */
   id: string;
@@ -173,9 +237,12 @@ export interface Item {
    *  with a preference. See `ItemFlag`. Authored by Scout, hand-editable. */
   flags?: ItemFlag[];
 
-  /** Category-specific extras that don't fit the shared shape, e.g.
-   *  { "hours": "8", "secondShooter": "yes" } for a photographer. */
-  attributes?: Record<string, string>;
+  /** What the price includes (and notable exclusions). See `Inclusion`. */
+  inclusions?: Inclusion[];
+  /** Optional paid extras and their cost. See `AddOn`. */
+  addOns?: AddOn[];
+  /** Rules and limitations. See `Restriction`. */
+  restrictions?: Restriction[];
 
   /** ISO timestamp set when the item was ingested. */
   addedAt?: string;
